@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { 
   Download, Monitor, Apple, Box, 
   CheckCircle, Clock, FileDown, ExternalLink,
-  Github, Star, GitFork
+  Github, Star, GitFork, ArrowDownToLine
 } from 'lucide-react'
 
 interface Release {
@@ -43,7 +43,7 @@ type Platform = 'windows' | 'mac' | 'linux'
 
 export default function Downloads() {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('windows')
-  const [stats, setStats] = useState<{ stars: number; forks: number } | null>(null)
+  const [stats, setStats] = useState<{ stars: number; forks: number; downloads: number } | null>(null)
 
   useEffect(() => {
     // Detect platform
@@ -55,19 +55,40 @@ export default function Downloads() {
     }
 
     // Fetch real GitHub stats
-    fetch('https://api.github.com/repos/bluerobotics/bluePLM')
-      .then(res => res.json())
-      .then(data => {
-        if (data.stargazers_count !== undefined) {
+    const fetchStats = async () => {
+      try {
+        // Get repo stats
+        const repoRes = await fetch('https://api.github.com/repos/bluerobotics/bluePLM')
+        const repoData = await repoRes.json()
+        
+        // Get all releases to count total downloads
+        const releasesRes = await fetch('https://api.github.com/repos/bluerobotics/bluePLM/releases')
+        const releasesData = await releasesRes.json()
+        
+        let totalDownloads = 0
+        if (Array.isArray(releasesData)) {
+          for (const release of releasesData) {
+            if (release.assets) {
+              for (const asset of release.assets) {
+                totalDownloads += asset.download_count || 0
+              }
+            }
+          }
+        }
+
+        if (repoData.stargazers_count !== undefined) {
           setStats({
-            stars: data.stargazers_count,
-            forks: data.forks_count,
+            stars: repoData.stargazers_count,
+            forks: repoData.forks_count,
+            downloads: totalDownloads,
           })
         }
-      })
-      .catch(() => {
+      } catch {
         // Silently fail - stats just won't show
-      })
+      }
+    }
+    
+    fetchStats()
   }, [])
 
   const platforms: { id: Platform; name: string; icon: typeof Monitor }[] = [
@@ -169,7 +190,19 @@ export default function Downloads() {
         {/* GitHub Stats - Only show if we got real data */}
         {stats && (
           <div className="max-w-3xl mx-auto mb-16">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              <a
+                href="https://github.com/bluerobotics/bluePLM/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 p-4 rounded-xl glass-light hover:bg-white/5 transition-all"
+              >
+                <ArrowDownToLine className="w-5 h-5 text-green-500" />
+                <div>
+                  <div className="font-display font-bold text-white">{stats.downloads.toLocaleString()}</div>
+                  <div className="text-xs text-gray-400">Downloads</div>
+                </div>
+              </a>
               <a
                 href="https://github.com/bluerobotics/bluePLM/stargazers"
                 target="_blank"
@@ -178,7 +211,7 @@ export default function Downloads() {
               >
                 <Star className="w-5 h-5 text-yellow-500" />
                 <div>
-                  <div className="font-display font-bold text-white">{stats.stars}</div>
+                  <div className="font-display font-bold text-white">{stats.stars.toLocaleString()}</div>
                   <div className="text-xs text-gray-400">Stars</div>
                 </div>
               </a>
@@ -190,7 +223,7 @@ export default function Downloads() {
               >
                 <GitFork className="w-5 h-5 text-ocean-400" />
                 <div>
-                  <div className="font-display font-bold text-white">{stats.forks}</div>
+                  <div className="font-display font-bold text-white">{stats.forks.toLocaleString()}</div>
                   <div className="text-xs text-gray-400">Forks</div>
                 </div>
               </a>
