@@ -132,6 +132,182 @@ pre, code {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
+/* Documentation prose styling */
+.prose-custom {
+  color: #d1d5db;
+  line-height: 1.8;
+}
+
+.prose-custom .lead {
+  font-size: 1.25rem;
+  color: #9ca3af;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.prose-custom h2 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prose-custom h2:first-of-type {
+  margin-top: 0;
+}
+
+.prose-custom h3 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-custom h4 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-custom p {
+  margin-bottom: 1.25rem;
+}
+
+.prose-custom ul, .prose-custom ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.prose-custom ul {
+  list-style-type: none;
+}
+
+.prose-custom ul > li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-custom ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0091d9, #24acf2);
+}
+
+.prose-custom ol {
+  list-style-type: none;
+  counter-reset: list-counter;
+}
+
+.prose-custom ol > li {
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.75rem;
+  counter-increment: list-counter;
+}
+
+.prose-custom ol > li::before {
+  content: counter(list-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(0, 145, 217, 0.15);
+  color: #24acf2;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose-custom ul ul, .prose-custom ol ul {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-custom strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.prose-custom a {
+  color: #24acf2;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.prose-custom a:hover {
+  color: #57c9ff;
+  text-decoration: underline;
+}
+
+.prose-custom code:not(pre code) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f472b6;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875em;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prose-custom kbd {
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8em;
+  font-family: inherit;
+  box-shadow: 0 2px 0 rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.prose-custom table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.prose-custom th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.prose-custom td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.prose-custom tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Doc content specific styles */
+.doc-content {
+  animation: fadeIn 0.4s ease-out;
+}
+
 /* Animation delays */
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
