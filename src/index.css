@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* NP Naipol - Blue Robotics brand font */
+@font-face {
+  font-family: 'NP Naipol';
+  src: url('/fonts/np-naipol-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NP Naipol';
+  src: url('/fonts/np-naipol-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NP Naipol';
+  src: url('/fonts/np-naipol-italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NP Naipol';
+  src: url('/fonts/np-naipol-bold-italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --color-brand: #0091d9;
   --color-brand-dark: #0074ae;

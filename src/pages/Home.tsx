@@ -165,7 +165,7 @@ export default function Home() {
 
             {/* Blue Robotics story */}
             <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6 animate-slide-up delay-200 italic">
-              "We got tired of paying for expensive PLM/PDM software. So we're building BluePLM to manage our own 400+ products. We love it—and we think you will too."
+              "We got tired of paying for expensive PLM/PDM software programmed in the 90s. So we're building BluePLM to manage our own 400+ products. We love it—and we think you will too."
             </p>
 
             {/* Made by Blue Robotics */}
@@ -173,15 +173,15 @@ export default function Home() {
               href="https://bluerobotics.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
+              className="inline-flex items-center gap-2 text-base text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
             >
               <span>Made with</span>
-              <Heart className="w-4 h-4 text-blue-400" strokeWidth={2} />
+              <Heart className="w-5 h-5 text-blue-400" strokeWidth={2} />
               <span>by</span>
               <img 
                 src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
                 alt="Blue Robotics" 
-                className="h-6 opacity-70 hover:opacity-100 transition-opacity"
+                className="h-8 opacity-70 hover:opacity-100 transition-opacity"
                 loading="eager"
               />
             </a>

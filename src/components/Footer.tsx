@@ -14,7 +14,7 @@ export default function Footer() {
                 alt="BluePLM" 
                 className="w-5 h-5 rounded"
               />
-              <span className="font-display font-semibold text-gray-300">BluePLM</span>
+              <span className="font-brand font-semibold text-gray-300">BluePLM</span>
             </Link>
             <span className="text-gray-600">·</span>
             <Link to="/downloads" className="hover:text-white transition-colors">
