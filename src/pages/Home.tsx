@@ -1,24 +1,136 @@
 import { Link } from 'react-router-dom'
 import { 
   Lock, History, GitBranch, Users, FolderSync, Trash2, 
-  FileCheck, Workflow, Cog, Database, Cloud,
-  Download, ArrowRight, Star, Building2, ChevronRight, Play
+  FileCheck, Workflow, Database, Bell, Shield, Search,
+  Download, ArrowRight, Star, ChevronRight, Play,
+  Globe, Building2, Package, AlertCircle, FileWarning,
+  HardDrive, MessageSquare, Webhook, Receipt,
+  Layers, Eye, Send
 } from 'lucide-react'
 
 const features = [
-  { icon: Lock, title: 'Check In / Check Out', description: 'Exclusive file locking with multi-machine tracking.' },
-  { icon: History, title: 'Version Control', description: 'Full history with one-click rollback.' },
-  { icon: GitBranch, title: 'File States', description: 'WIP → In Review → Released → Obsolete.' },
-  { icon: Users, title: 'Real-time Sync', description: 'Instant updates across all clients.' },
-  { icon: FolderSync, title: 'Multi-vault', description: 'Organize by project with per-vault permissions.' },
-  { icon: Trash2, title: 'Trash & Recovery', description: 'Soft delete with full restore capability.' },
+  // Core PLM Features - All Working
+  { icon: Lock, title: 'Check In / Check Out', description: 'Exclusive file locking with multi-machine tracking.', inProgress: false },
+  { icon: History, title: 'Version Control', description: 'Full history with one-click rollback.', inProgress: false },
+  { icon: GitBranch, title: 'File States', description: 'WIP → In Review → Released → Obsolete.', inProgress: false },
+  { icon: Users, title: 'Real-time Sync', description: 'Instant updates across all clients.', inProgress: false },
+  { icon: FolderSync, title: 'Multi-vault', description: 'Organize by project with per-vault permissions.', inProgress: false },
+  { icon: Trash2, title: 'Trash & Recovery', description: 'Soft delete with full restore capability.', inProgress: false },
+  
+  // Engineering Change Management
+  { icon: FileCheck, title: 'Engineering Change Orders', description: 'Create ECOs with full traceability and linked files.', inProgress: false },
+  { icon: AlertCircle, title: 'Engineering Change Requests', description: 'Track issues and change requests linked to ECOs.', inProgress: true },
+  { icon: FileWarning, title: 'Deviations', description: 'Material, dimension, and process deviations with approvals.', inProgress: false },
+  
+  // Workflows & Reviews
+  { icon: Workflow, title: 'Visual Workflow Builder', description: 'Drag-and-drop workflow designer with approval gates.', inProgress: false },
+  { icon: Eye, title: 'Reviews & Approvals', description: 'Request reviews, approve/reject files with comments.', inProgress: false },
+  { icon: Bell, title: 'Notifications', description: 'Real-time notification badges and alerts.', inProgress: false },
+  
+  // Supply Chain
+  { icon: Globe, title: 'Supplier Portal', description: 'Manage suppliers, track approvals, sync from Odoo.', inProgress: false },
+  { icon: Receipt, title: 'Request for Quotes', description: 'Create RFQs, generate PDFs, send to suppliers.', inProgress: false },
+  { icon: Building2, title: 'Supplier Management', description: 'Supplier database with approval workflows and ERP sync.', inProgress: false },
+  
+  // Data Management
+  { icon: Layers, title: 'BOM Management', description: 'Extract and sync bill of materials from SolidWorks.', inProgress: false },
+  { icon: Search, title: 'Advanced Search', description: 'Full-text search across all files and metadata.', inProgress: false },
+  { icon: Shield, title: 'Role-based Permissions', description: 'Granular access control per vault and user.', inProgress: false },
+  
+  // Operations
+  { icon: HardDrive, title: 'Automated Backups', description: 'Scheduled encrypted backups with restic.', inProgress: false },
+  { icon: Send, title: 'STEP & PDF Export', description: 'Batch export release files from SolidWorks.', inProgress: false },
+  { icon: Package, title: 'Product Catalog', description: 'Track product lifecycle and configurations.', inProgress: true },
+  
+  // Integrations (shown as features)
+  { icon: MessageSquare, title: 'Slack Notifications', description: 'Get notified in Slack for reviews and changes.', inProgress: false },
+  { icon: Webhook, title: 'Webhooks', description: 'Custom integrations via webhook events.', inProgress: false },
 ]
 
+// Integration logos - using Simple Icons CDN for proper brand icons
+const SolidWorksLogo = () => (
+  <img 
+    src="https://cdn.simpleicons.org/dassaultsystemes/E2231A" 
+    alt="SolidWorks" 
+    className="w-7 h-7"
+  />
+)
+
+const OdooLogo = () => (
+  <img 
+    src="https://cdn.simpleicons.org/odoo/714B67" 
+    alt="Odoo" 
+    className="w-7 h-7"
+  />
+)
+
+const WooCommerceLogo = () => (
+  <img 
+    src="https://cdn.simpleicons.org/woocommerce/96588A" 
+    alt="WooCommerce" 
+    className="w-7 h-7"
+  />
+)
+
+const GoogleDriveLogo = () => (
+  <img 
+    src="https://cdn.simpleicons.org/googledrive" 
+    alt="Google Drive" 
+    className="w-7 h-7"
+  />
+)
+
+const RestApiLogo = () => (
+  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+    <Database className="w-4 h-4 text-white" />
+  </div>
+)
+
+const ShopifyLogo = () => (
+  <img 
+    src="https://cdn.simpleicons.org/shopify/7AB55C" 
+    alt="Shopify" 
+    className="w-7 h-7"
+  />
+)
+
 const integrations = [
-  { icon: Cog, title: 'SolidWorks', description: 'Native add-in with thumbnails and BOM extraction.' },
-  { icon: Cloud, title: 'Google Drive', description: 'Browse and edit Docs, Sheets, Slides inline.' },
-  { icon: Database, title: 'REST API', description: 'Fastify server with Swagger docs and webhooks.' },
-  { icon: Building2, title: 'Odoo ERP', description: 'Sync suppliers and products automatically.' },
+  { 
+    Logo: SolidWorksLogo, 
+    title: 'SolidWorks', 
+    description: 'Native add-in with thumbnails and BOM extraction.',
+    color: 'text-red-400'
+  },
+  { 
+    Logo: OdooLogo, 
+    title: 'Odoo ERP', 
+    description: 'Sync suppliers, products, and BOMs automatically.',
+    color: 'text-purple-400'
+  },
+  { 
+    Logo: WooCommerceLogo, 
+    title: 'WooCommerce', 
+    description: 'Sync product catalog and inventory levels.',
+    color: 'text-purple-400'
+  },
+  { 
+    Logo: GoogleDriveLogo, 
+    title: 'Google Drive', 
+    description: 'Browse and edit Docs, Sheets, Slides inline.',
+    color: 'text-blue-400'
+  },
+  { 
+    Logo: RestApiLogo, 
+    title: 'REST API', 
+    description: 'Fastify server with Swagger docs and webhooks.',
+    color: 'text-emerald-400'
+  },
+  { 
+    Logo: ShopifyLogo, 
+    title: 'Shopify', 
+    description: 'Product and inventory synchronization.',
+    color: 'text-green-400'
+  },
 ]
 
 export default function Home() {
@@ -52,8 +164,8 @@ export default function Home() {
 
             {/* Subheadline */}
             <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-4 animate-slide-up delay-100">
-              Version control, check-in/check-out, ECOs, workflows, reviews, 
-              real-time collaboration, SolidWorks integration, and more.
+              Version control, ECOs, RFQs, supplier portal, workflows, reviews, 
+              deviations, SolidWorks integration, ERP sync, and so much more.
             </p>
             <p className="text-base text-gray-500 max-w-xl mx-auto mb-10 animate-slide-up delay-200">
               Enterprise PLM costs <span className="line-through text-gray-600">$10,000+/year</span>. 
@@ -101,83 +213,52 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-3">
-              Core Features
+              24+ Features & Counting
             </h2>
-            <p className="text-gray-400">
-              Enterprise-grade PLM for teams of all sizes.
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Enterprise-grade PLM for teams of all sizes. From version control to supplier management, 
+              BluePLM has everything you need to manage your product lifecycle.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="group p-5 rounded-xl glass-light hover:bg-white/5 transition-all duration-300"
+                className="group p-4 rounded-xl glass-light hover:bg-white/5 transition-all duration-300 relative"
               >
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-ocean-500/20 to-brand-600/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
-                  <feature.icon className="w-5 h-5 text-ocean-400" />
+                {feature.inProgress && (
+                  <span className="absolute top-2 right-2 px-2 py-0.5 text-[10px] font-medium rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    Soon
+                  </span>
+                )}
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-ocean-500/20 to-brand-600/20 flex items-center justify-center mb-2.5 group-hover:scale-110 transition-transform duration-300">
+                  <feature.icon className="w-4.5 h-4.5 text-ocean-400" />
                 </div>
-                <h3 className="font-display font-semibold text-white mb-1">
+                <h3 className="font-display font-semibold text-white text-sm mb-1">
                   {feature.title}
                 </h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-400 text-xs leading-relaxed">
                   {feature.description}
                 </p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ECO Section */}
-      <section className="relative py-20 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 text-sm font-medium mb-4">
-                <FileCheck className="w-4 h-4" />
-                ECO Management
+          {/* Feature Categories Summary */}
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { label: 'Core PLM', count: '6', description: 'Version control, file states, check-in/out' },
+              { label: 'Change Management', count: '5', description: 'ECOs, ECRs, deviations, workflows' },
+              { label: 'Supply Chain', count: '3', description: 'Suppliers, RFQs, quotes' },
+              { label: 'Integrations', count: '6+', description: 'SolidWorks, Odoo, Slack, API' },
+            ].map((cat) => (
+              <div key={cat.label} className="text-center p-4 rounded-xl glass-light">
+                <div className="text-2xl font-bold text-gradient mb-1">{cat.count}</div>
+                <div className="text-white font-medium text-sm mb-1">{cat.label}</div>
+                <div className="text-gray-500 text-xs">{cat.description}</div>
               </div>
-              <h2 className="font-display text-3xl font-bold text-white mb-4">
-                Engineering Change Orders
-              </h2>
-              <p className="text-gray-400 mb-6">
-                Create ECOs with full traceability. Visual workflow builder with 
-                approval gates before releases.
-              </p>
-              <ul className="space-y-2 text-sm">
-                {['ECO creation with priority levels', 'Visual workflow builder', 'Review requests with due dates', 'Notification badges'].map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-gray-300">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="relative">
-              <div className="p-6 rounded-xl glass">
-                <div className="flex items-center gap-3 mb-5">
-                  <Workflow className="w-6 h-6 text-ocean-400" />
-                  <span className="font-semibold text-white">Workflow Builder</span>
-                </div>
-                <div className="space-y-2">
-                  {[
-                    { state: 'WIP', color: 'bg-yellow-500' },
-                    { state: 'In Review', color: 'bg-blue-500' },
-                    { state: 'Released', color: 'bg-green-500' },
-                    { state: 'Obsolete', color: 'bg-gray-500' },
-                  ].map((item, i) => (
-                    <div key={item.state} className="flex items-center gap-3">
-                      <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
-                      <div className="flex-1 h-9 rounded-lg bg-white/5 flex items-center px-3 text-sm text-gray-300">
-                        {item.state}
-                      </div>
-                      {i < 3 && <ArrowRight className="w-4 h-4 text-gray-600" />}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -194,14 +275,14 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {integrations.map((integration) => (
               <div
                 key={integration.title}
                 className="group p-5 rounded-xl glass-light hover:bg-white/5 transition-all duration-300"
               >
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-ocean-500/20 to-brand-600/20 flex items-center justify-center mb-3">
-                  <integration.icon className="w-5 h-5 text-ocean-400" />
+                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <integration.Logo />
                 </div>
                 <h3 className="font-display font-semibold text-white mb-1">
                   {integration.title}
@@ -215,40 +296,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative py-20">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="p-10 rounded-2xl glass relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-ocean-500/10 to-brand-600/10" />
-            <div className="relative">
-              <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-3">
-                Ready to get started?
-              </h2>
-              <p className="text-gray-400 mb-6">
-                Free, open-source, and self-hosted.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  to="/downloads"
-                  className="group flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-ocean-500 to-brand-600 text-white hover:from-ocean-400 hover:to-brand-500 transition-all duration-300 glow"
-                >
-                  <Download className="w-5 h-5" />
-                  Download BluePLM
-                </Link>
-                <a
-                  href="https://discuss.bluerobotics.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-gray-300 hover:text-white transition-colors"
-                >
-                  Join the Forum
-                  <ChevronRight className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

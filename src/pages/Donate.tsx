@@ -271,49 +271,6 @@ export default function Donate() {
           </div>
         </div>
 
-        {/* Blue Robotics Attribution */}
-        <div className="max-w-2xl mx-auto mt-20 text-center">
-          <div className="p-8 rounded-2xl glass">
-            <a
-              href="https://bluerobotics.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mb-4"
-            >
-              <img
-                src="https://bluerobotics.com/wp-content/uploads/2016/05/BR-Logo-e1649267636490.png"
-                alt="Blue Robotics"
-                className="h-10 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition-opacity"
-              />
-            </a>
-            <h3 className="font-display text-lg font-bold text-white mb-2">
-              Made by Blue Robotics
-            </h3>
-            <p className="text-sm text-gray-400 mb-4">
-              BluePLM is developed by Blue Robotics, enabling the future of marine robotics.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="https://bluerobotics.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg glass-light hover:bg-white/10 transition-all text-sm text-gray-300 hover:text-white"
-              >
-                Website
-                <ExternalLink className="w-3 h-3" />
-              </a>
-              <a
-                href="https://github.com/bluerobotics"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg glass-light hover:bg-white/10 transition-all text-sm text-gray-300 hover:text-white"
-              >
-                <Github className="w-3.5 h-3.5" />
-                GitHub
-              </a>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
