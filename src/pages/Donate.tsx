@@ -202,20 +202,11 @@ export default function Donate() {
 
             {/* Donate Button */}
             <button
-              onClick={handleDonate}
-              disabled={amount <= 0}
-              className={`w-full flex items-center justify-center gap-3 py-4 rounded-xl text-lg font-semibold transition-all duration-300 ${
-                amount > 0
-                  ? frequency === 'monthly'
-                    ? 'bg-gradient-to-r from-pink-500 to-rose-600 text-white hover:from-pink-400 hover:to-rose-500 glow'
-                    : 'bg-gradient-to-r from-ocean-500 to-brand-600 text-white hover:from-ocean-400 hover:to-brand-500 glow'
-                  : 'bg-white/10 text-gray-500 cursor-not-allowed'
-              }`}
+              disabled={true}
+              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl text-lg font-semibold bg-white/10 text-gray-500 cursor-not-allowed"
             >
               <Heart className="w-5 h-5" />
-              {frequency === 'monthly' ? 'Donate Monthly' : 'Donate'}{' '}
-              {amount > 0 && `${currentCurrency.symbol}${totalWithFees.toFixed(2)}`}
-              {frequency === 'monthly' && amount > 0 && '/mo'}
+              Donations Coming Soon
             </button>
 
             {/* Payment Methods */}
