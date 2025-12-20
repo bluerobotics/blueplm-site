@@ -164,9 +164,8 @@ export default function Home() {
             </p>
 
             {/* Blue Robotics story */}
-            <p className="text-sm text-gray-500 max-w-lg mx-auto mb-6 animate-slide-up delay-200 italic">
-              "We got tired of paying for expensive PLM/PDM software. So we built BluePLM to manage 
-              our own 400+ products. We hope you'll love it as much as we do."
+            <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6 animate-slide-up delay-200 italic">
+              "We got tired of paying for expensive PLM/PDM software. So we're building BluePLM to manage our own 400+ products. We love it—and we think you will too."
             </p>
 
             {/* Made by Blue Robotics */}
@@ -295,11 +294,11 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex flex-wrap justify-center gap-5">
             {integrations.map((integration) => (
               <div
                 key={integration.title}
-                className="group p-5 rounded-xl glass-light hover:bg-white/5 transition-all duration-300"
+                className="group p-5 rounded-xl glass-light hover:bg-white/5 transition-all duration-300 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)]"
               >
                 <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <integration.Logo />
