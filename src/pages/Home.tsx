@@ -165,7 +165,7 @@ export default function Home() {
 
             {/* Blue Robotics story */}
             <p className="text-sm text-gray-500 max-w-lg mx-auto mb-6 animate-slide-up delay-200 italic">
-              "We got tired of paying for expensive PDM software. So we built BluePLM to manage 
+              "We got tired of paying for expensive PLM/PDM software. So we built BluePLM to manage 
               our own 400+ products. We hope you'll love it as much as we do."
             </p>
 
