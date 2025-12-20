@@ -66,13 +66,6 @@ export default function Donate() {
     setSelectedAmount(null)
   }
 
-  const handleDonate = () => {
-    // TODO: Integrate with Stripe or payment processor
-    // For now, show alert with donation details
-    const donationType = frequency === 'monthly' ? 'monthly' : 'one-time'
-    alert(`Thank you for your ${currentCurrency.symbol}${totalWithFees.toFixed(2)} ${donationType} donation!\n\nPayment processing coming soon.`)
-  }
-
   return (
     <div className="relative py-16 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
