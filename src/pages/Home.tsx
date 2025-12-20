@@ -51,8 +51,13 @@ export default function Home() {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg sm:text-xl text-gray-400 max-w-xl mx-auto mb-10 animate-slide-up delay-100">
-              Version control, check-in/check-out, ECOs, and SolidWorks integration.
+            <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-4 animate-slide-up delay-100">
+              Version control, check-in/check-out, ECOs, workflows, reviews, 
+              real-time collaboration, and SolidWorks integration.
+            </p>
+            <p className="text-base text-gray-500 max-w-xl mx-auto mb-10 animate-slide-up delay-200">
+              Enterprise PLM costs <span className="line-through text-gray-600">$10,000+/year</span>. 
+              BluePLM is <span className="text-green-400 font-semibold">free forever</span>.
             </p>
 
             {/* CTA Buttons */}
