@@ -269,24 +269,6 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Feature Categories Summary */}
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { label: 'Core PLM', count: '6', description: 'Version control, file states, check-in/out', status: 'Ready' },
-              { label: 'Change Management', count: '5', description: 'ECOs, ECRs, deviations, workflows', status: 'In Progress' },
-              { label: 'Supply Chain', count: '3', description: 'Suppliers, RFQs, quotes', status: 'In Progress' },
-              { label: 'Integrations', count: '5', description: 'SolidWorks, Odoo, Slack, API', status: 'In Progress' },
-            ].map((cat) => (
-              <div key={cat.label} className="text-center p-4 rounded-xl glass-light">
-                <div className="text-2xl font-bold text-gradient mb-1">{cat.count}</div>
-                <div className="text-white font-medium text-sm mb-1">{cat.label}</div>
-                <div className="text-gray-500 text-xs">{cat.description}</div>
-                <div className={`text-[10px] mt-2 px-2 py-0.5 rounded-full inline-block ${cat.status === 'Ready' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}`}>
-                  {cat.status}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
