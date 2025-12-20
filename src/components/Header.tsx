@@ -18,13 +18,13 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 relative">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group z-10">
+          <Link to="/" className="flex items-center gap-2.5 group z-10">
             <img 
               src="/icon.svg" 
               alt="BluePLM" 
-              className="w-11 h-11 rounded-lg"
+              className="w-10 h-10 rounded-lg self-center"
             />
-            <span className="font-brand text-3xl tracking-tight leading-none">
+            <span className="font-brand text-[28px] tracking-tight self-center" style={{ lineHeight: 1 }}>
               <span className="text-white font-bold">Blue</span>
               <span className="text-gradient font-extrabold">PLM</span>
             </span>
