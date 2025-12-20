@@ -171,23 +171,26 @@ export default function Home() {
             </div>
 
             {/* Made with love */}
-            <div className="inline-flex items-center gap-2 text-base text-gray-400 mb-10 animate-slide-up delay-200">
-              <span>Made with</span>
-              <Heart className="w-5 h-5 text-blue-400 fill-blue-400" />
-              <span>by</span>
-              <a 
-                href="https://bluerobotics.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-gray-300 transition-colors"
-              >
-                <img 
-                  src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
-                  alt="Blue Robotics" 
-                  className="h-9 opacity-80 hover:opacity-100 transition-opacity inline"
-                  loading="eager"
-                />
-              </a>
+            <div className="flex flex-col items-center gap-1 text-base text-gray-400 mb-10 animate-slide-up delay-200">
+              <div className="inline-flex items-center gap-2">
+                <span>Made with</span>
+                <Heart className="w-5 h-5 text-blue-400 fill-blue-400" />
+                <span>by</span>
+                <a 
+                  href="https://bluerobotics.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  <img 
+                    src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
+                    alt="Blue Robotics" 
+                    className="h-9 opacity-80 hover:opacity-100 transition-opacity inline"
+                    loading="eager"
+                  />
+                </a>
+              </div>
+              <span className="text-sm text-gray-500">and contributors worldwide</span>
             </div>
 
             {/* CTA Buttons */}
