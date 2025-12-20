@@ -24,9 +24,14 @@ export default function Header() {
               alt="BluePLM" 
               className="w-10 h-10 rounded-lg"
             />
-            <span className="font-brand text-[28px] tracking-tight translate-y-[1px]">
-              <span className="text-white font-bold">Blue</span>
-              <span className="font-extrabold" style={{ background: 'linear-gradient(135deg, #0091d9 0%, #57c9ff 50%, #93deff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 800 }}>PLM</span>
+            <span className="font-brand text-[28px] tracking-tight" style={{ transform: 'translateY(3px)' }}>
+              <span className="text-white" style={{ fontWeight: 700 }}>Blue</span>
+              <span style={{ 
+                background: 'linear-gradient(135deg, #0091d9 0%, #57c9ff 50%, #93deff 100%)', 
+                WebkitBackgroundClip: 'text', 
+                WebkitTextFillColor: 'transparent',
+                fontWeight: 700
+              }}>PLM</span>
             </span>
           </Link>
 
