@@ -24,9 +24,9 @@ export default function Header() {
               alt="BluePLM" 
               className="w-11 h-11 rounded-lg"
             />
-            <span className="font-brand font-bold text-3xl tracking-tight leading-none">
-              <span className="text-white">Blue</span>
-              <span className="text-gradient">PLM</span>
+            <span className="font-brand text-3xl tracking-tight leading-none">
+              <span className="text-white font-bold">Blue</span>
+              <span className="text-gradient font-extrabold">PLM</span>
             </span>
           </Link>
 
