@@ -184,7 +184,7 @@ export default function Home() {
                 <img 
                   src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
                   alt="Blue Robotics" 
-                  className="h-7 opacity-80 hover:opacity-100 transition-opacity inline"
+                  className="h-9 opacity-80 hover:opacity-100 transition-opacity inline"
                   loading="eager"
                 />
               </a>
