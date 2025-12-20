@@ -22,9 +22,9 @@ export default function Header() {
             <img 
               src="/icon.svg" 
               alt="BluePLM" 
-              className="w-10 h-10 rounded-lg"
+              className="w-11 h-11 rounded-lg"
             />
-            <span className="font-brand font-bold text-2xl tracking-tight">
+            <span className="font-brand font-bold text-3xl tracking-tight leading-none">
               <span className="text-white">Blue</span>
               <span className="text-gradient">PLM</span>
             </span>
