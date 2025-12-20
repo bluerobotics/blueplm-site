@@ -90,14 +90,6 @@ const RestApiLogo = () => (
   </div>
 )
 
-const ShopifyLogo = () => (
-  <img 
-    src="https://cdn.simpleicons.org/shopify/7AB55C" 
-    alt="Shopify" 
-    className="w-7 h-7"
-    loading="lazy"
-  />
-)
 
 const integrations = [
   { 
@@ -129,12 +121,6 @@ const integrations = [
     title: 'REST API', 
     description: 'Fastify server with Swagger docs and webhooks.',
     color: 'text-emerald-400'
-  },
-  { 
-    Logo: ShopifyLogo, 
-    title: 'Shopify', 
-    description: 'Product and inventory synchronization.',
-    color: 'text-green-400'
   },
 ]
 
@@ -172,9 +158,15 @@ export default function Home() {
               Version control, ECOs, RFQs, supplier portal, workflows, reviews, 
               deviations, SolidWorks integration, ERP sync, and so much more.
             </p>
-            <p className="text-base text-gray-500 max-w-xl mx-auto mb-6 animate-slide-up delay-200">
+            <p className="text-base text-gray-500 max-w-xl mx-auto mb-4 animate-slide-up delay-200">
               Enterprise PLM costs <span className="line-through text-gray-600">$10,000+/year</span>. 
               BluePLM is <span className="text-green-400 font-semibold">free forever</span>.
+            </p>
+
+            {/* Blue Robotics story */}
+            <p className="text-sm text-gray-500 max-w-lg mx-auto mb-6 animate-slide-up delay-200 italic">
+              "We got tired of paying for expensive PDM software. So we built BluePLM to manage 
+              our own 400+ products. We hope you'll love it as much as we do."
             </p>
 
             {/* Made by Blue Robotics */}
@@ -276,7 +268,7 @@ export default function Home() {
               { label: 'Core PLM', count: '6', description: 'Version control, file states, check-in/out', status: 'Ready' },
               { label: 'Change Management', count: '5', description: 'ECOs, ECRs, deviations, workflows', status: 'In Progress' },
               { label: 'Supply Chain', count: '3', description: 'Suppliers, RFQs, quotes', status: 'In Progress' },
-              { label: 'Integrations', count: '6+', description: 'SolidWorks, Odoo, Slack, API', status: 'In Progress' },
+              { label: 'Integrations', count: '5', description: 'SolidWorks, Odoo, Slack, API', status: 'In Progress' },
             ].map((cat) => (
               <div key={cat.label} className="text-center p-4 rounded-xl glass-light">
                 <div className="text-2xl font-bold text-gradient mb-1">{cat.count}</div>
