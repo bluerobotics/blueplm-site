@@ -164,9 +164,11 @@ export default function Home() {
             </p>
 
             {/* Blue Robotics story */}
-            <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6 animate-slide-up delay-200 italic">
-              "We got tired of paying for expensive PLM/PDM software programmed in the 90s. So we're building BluePLM to manage our own 400+ products. We love it—and we think you will too."
-            </p>
+            <div className="text-sm text-gray-500 max-w-md mx-auto mb-6 animate-slide-up delay-200 italic space-y-1">
+              <p>"We got tired of paying for expensive PLM/PDM software programmed in the 90s.</p>
+              <p>So we're building BluePLM to manage our own 400+ products.</p>
+              <p>We love it—and we think you will too."</p>
+            </div>
 
             {/* Made by Blue Robotics */}
             <a 
