@@ -143,7 +143,7 @@ export default function Home() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-light text-sm mb-8 animate-fade-in">
               <Star className="w-4 h-4 text-yellow-500" />
-              <span className="text-gray-300">Open Source · MIT License</span>
+              <span className="text-gray-300">Open Source · Self-Hosted · MIT License</span>
               <a
                 href="https://github.com/bluerobotics/bluePLM"
                 target="_blank"
