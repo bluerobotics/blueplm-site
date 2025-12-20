@@ -53,7 +53,7 @@ export default function Home() {
             {/* Subheadline */}
             <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-4 animate-slide-up delay-100">
               Version control, check-in/check-out, ECOs, workflows, reviews, 
-              real-time collaboration, and SolidWorks integration.
+              real-time collaboration, SolidWorks integration, and more.
             </p>
             <p className="text-base text-gray-500 max-w-xl mx-auto mb-10 animate-slide-up delay-200">
               Enterprise PLM costs <span className="line-through text-gray-600">$10,000+/year</span>. 
