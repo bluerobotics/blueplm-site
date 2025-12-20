@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { 
-  Heart, Github, CreditCard, 
+  Heart, CreditCard, 
   MessageCircle, Bug, Lightbulb, Users,
   ExternalLink, ChevronRight, Wallet, RefreshCw
 } from 'lucide-react'
@@ -214,20 +214,6 @@ export default function Donate() {
             </div>
           </div>
 
-          {/* Alternative: GitHub Sponsors */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500 mb-2">Or support via</p>
-            <a
-              href="https://github.com/sponsors/bluerobotics"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-            >
-              <Github className="w-4 h-4" />
-              GitHub Sponsors
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          </div>
         </div>
 
         {/* Community Support */}
