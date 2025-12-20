@@ -54,17 +54,15 @@ body {
   color: #fff;
 }
 
-/* Glassmorphism utilities */
+/* Glassmorphism utilities - optimized to avoid backdrop-filter */
 @layer utilities {
   .glass {
-    background: rgba(13, 21, 38, 0.7);
-    backdrop-filter: blur(12px);
+    background: rgba(13, 21, 38, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
   
   .glass-light {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
   
@@ -91,17 +89,9 @@ body {
   }
 }
 
-/* Animated gradient background */
-.animated-gradient {
-  background: linear-gradient(-45deg, #0a0f1a, #0d1526, #001d2e, #003a5c);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* Static gradient background - animated version removed for performance */
+.static-gradient {
+  background: linear-gradient(-45deg, #0a0f1a, #0d1526, #001d2e, #0f1a2e);
 }
 
 /* Grid pattern overlay */

@@ -6,12 +6,12 @@ import DonationBar from './DonationBar'
 export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Background elements */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 animated-gradient" />
-        <div className="absolute inset-0 grid-pattern" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-ocean-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl" />
+      {/* Background elements - simplified for performance */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-[#0a0f1a] via-[#0d1526] to-[#0f1a2e]">
+        <div className="absolute inset-0 grid-pattern opacity-50" />
+        {/* Static gradient orbs - no blur for perf */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-ocean-500/5 rounded-full" style={{ filter: 'blur(100px)' }} />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-500/5 rounded-full" style={{ filter: 'blur(100px)' }} />
       </div>
       
       <DonationBar current={0} goal={1000} />

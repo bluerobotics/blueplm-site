@@ -5,7 +5,7 @@ import {
   Download, ArrowRight, Star, ChevronRight, Play,
   Globe, Building2, Package, AlertCircle, FileWarning,
   HardDrive, MessageSquare, Webhook, Receipt,
-  Layers, Eye, Send
+  Layers, Eye, Send, Heart
 } from 'lucide-react'
 
 const features = [
@@ -53,6 +53,7 @@ const SolidWorksLogo = () => (
     src="https://cdn.simpleicons.org/dassaultsystemes/E2231A" 
     alt="SolidWorks" 
     className="w-7 h-7"
+    loading="lazy"
   />
 )
 
@@ -61,6 +62,7 @@ const OdooLogo = () => (
     src="https://cdn.simpleicons.org/odoo/714B67" 
     alt="Odoo" 
     className="w-7 h-7"
+    loading="lazy"
   />
 )
 
@@ -69,6 +71,7 @@ const WooCommerceLogo = () => (
     src="https://cdn.simpleicons.org/woocommerce/96588A" 
     alt="WooCommerce" 
     className="w-7 h-7"
+    loading="lazy"
   />
 )
 
@@ -77,6 +80,7 @@ const GoogleDriveLogo = () => (
     src="https://cdn.simpleicons.org/googledrive" 
     alt="Google Drive" 
     className="w-7 h-7"
+    loading="lazy"
   />
 )
 
@@ -91,6 +95,7 @@ const ShopifyLogo = () => (
     src="https://cdn.simpleicons.org/shopify/7AB55C" 
     alt="Shopify" 
     className="w-7 h-7"
+    loading="lazy"
   />
 )
 
@@ -177,15 +182,16 @@ export default function Home() {
               href="https://bluerobotics.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
+              className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
             >
               <span>Made with</span>
-              <span className="text-blue-400">💙</span>
+              <Heart className="w-4 h-4 text-blue-400" strokeWidth={2} />
               <span>by</span>
               <img 
                 src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
                 alt="Blue Robotics" 
-                className="h-5 opacity-70 hover:opacity-100 transition-opacity"
+                className="h-6 opacity-70 hover:opacity-100 transition-opacity"
+                loading="eager"
               />
             </a>
 
@@ -219,6 +225,8 @@ export default function Home() {
                 src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/screenshot.png"
                 alt="BluePLM Screenshot"
                 className="w-full"
+                loading="eager"
+                decoding="async"
               />
             </div>
           </div>

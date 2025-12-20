@@ -14,11 +14,11 @@ export default function Header() {
   const location = useLocation()
 
   return (
-    <header className="sticky top-0 z-50 glass">
+    <header className="sticky top-0 z-50 bg-[#0d1526]/95 border-b border-white/5">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 relative">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group z-10">
             <img 
               src="/icon.svg" 
               alt="BluePLM" 
@@ -30,8 +30,8 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          {/* Desktop navigation - centered */}
+          <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
             {navigation.map((item) => {
               const isActive = !item.external && (
                 location.pathname === item.href || 
@@ -70,7 +70,7 @@ export default function Header() {
           </div>
 
           {/* GitHub link */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3 z-10">
             <a
               href="https://github.com/bluerobotics/bluePLM"
               target="_blank"
