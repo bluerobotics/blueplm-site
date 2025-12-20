@@ -22,12 +22,17 @@ export default function Header() {
             <img 
               src="/icon.svg" 
               alt="BluePLM" 
-              className="w-9 h-9 rounded-lg"
+              className="w-10 h-10 rounded-lg"
             />
-            <span className="font-brand font-bold text-xl tracking-tight">
-              <span className="text-white">Blue</span>
-              <span className="text-gradient">PLM</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-brand font-bold text-2xl tracking-tight leading-tight">
+                <span className="text-white">Blue</span>
+                <span className="text-gradient">PLM</span>
+              </span>
+              <span className="text-[10px] text-gray-500 tracking-wide">
+                by <a href="https://bluerobotics.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">Blue Robotics</a>
+              </span>
+            </div>
           </Link>
 
           {/* Desktop navigation - centered */}

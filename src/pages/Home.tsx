@@ -170,22 +170,25 @@ export default function Home() {
               <p>We love it—and we think you will too."</p>
             </div>
 
-            {/* Made by Blue Robotics */}
-            <a 
-              href="https://bluerobotics.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
-            >
-              <span className="text-2xl font-bold text-white">BluePLM</span>
-              <span className="text-base">by</span>
-              <img 
-                src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
-                alt="Blue Robotics" 
-                className="h-7 opacity-80 hover:opacity-100 transition-opacity"
-                loading="eager"
-              />
-            </a>
+            {/* Made with love */}
+            <div className="inline-flex items-center gap-2 text-sm text-gray-400 mb-10 animate-slide-up delay-200">
+              <span>Made with</span>
+              <Heart className="w-4 h-4 text-blue-400 fill-blue-400" />
+              <span>by</span>
+              <a 
+                href="https://bluerobotics.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-gray-300 transition-colors"
+              >
+                <img 
+                  src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
+                  alt="Blue Robotics" 
+                  className="h-5 opacity-80 hover:opacity-100 transition-opacity inline"
+                  loading="eager"
+                />
+              </a>
+            </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up delay-200">
