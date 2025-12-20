@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 
 const features = [
-  // Core PLM Features - All Working
+  // Core PLM Features - Working
   { icon: Lock, title: 'Check In / Check Out', description: 'Exclusive file locking with multi-machine tracking.', inProgress: false },
   { icon: History, title: 'Version Control', description: 'Full history with one-click rollback.', inProgress: false },
   { icon: GitBranch, title: 'File States', description: 'WIP → In Review → Released → Obsolete.', inProgress: false },
@@ -18,33 +18,33 @@ const features = [
   { icon: Trash2, title: 'Trash & Recovery', description: 'Soft delete with full restore capability.', inProgress: false },
   
   // Engineering Change Management
-  { icon: FileCheck, title: 'Engineering Change Orders', description: 'Create ECOs with full traceability and linked files.', inProgress: false },
+  { icon: FileCheck, title: 'Engineering Change Orders', description: 'Create ECOs with full traceability and linked files.', inProgress: true },
   { icon: AlertCircle, title: 'Engineering Change Requests', description: 'Track issues and change requests linked to ECOs.', inProgress: true },
-  { icon: FileWarning, title: 'Deviations', description: 'Material, dimension, and process deviations with approvals.', inProgress: false },
+  { icon: FileWarning, title: 'Deviations', description: 'Material, dimension, and process deviations with approvals.', inProgress: true },
   
   // Workflows & Reviews
-  { icon: Workflow, title: 'Visual Workflow Builder', description: 'Drag-and-drop workflow designer with approval gates.', inProgress: false },
-  { icon: Eye, title: 'Reviews & Approvals', description: 'Request reviews, approve/reject files with comments.', inProgress: false },
-  { icon: Bell, title: 'Notifications', description: 'Real-time notification badges and alerts.', inProgress: false },
+  { icon: Workflow, title: 'Visual Workflow Builder', description: 'Drag-and-drop workflow designer with approval gates.', inProgress: true },
+  { icon: Eye, title: 'Reviews & Approvals', description: 'Request reviews, approve/reject files with comments.', inProgress: true },
+  { icon: Bell, title: 'Notifications', description: 'Real-time notification badges and alerts.', inProgress: true },
   
   // Supply Chain
-  { icon: Globe, title: 'Supplier Portal', description: 'Manage suppliers, track approvals, sync from Odoo.', inProgress: false },
-  { icon: Receipt, title: 'Request for Quotes', description: 'Create RFQs, generate PDFs, send to suppliers.', inProgress: false },
-  { icon: Building2, title: 'Supplier Management', description: 'Supplier database with approval workflows and ERP sync.', inProgress: false },
+  { icon: Globe, title: 'Supplier Portal', description: 'Manage suppliers, track approvals, sync from Odoo.', inProgress: true },
+  { icon: Receipt, title: 'Request for Quotes', description: 'Create RFQs, generate PDFs, send to suppliers.', inProgress: true },
+  { icon: Building2, title: 'Supplier Management', description: 'Supplier database with approval workflows and ERP sync.', inProgress: true },
   
   // Data Management
-  { icon: Layers, title: 'BOM Management', description: 'Extract and sync bill of materials from SolidWorks.', inProgress: false },
-  { icon: Search, title: 'Advanced Search', description: 'Full-text search across all files and metadata.', inProgress: false },
-  { icon: Shield, title: 'Role-based Permissions', description: 'Granular access control per vault and user.', inProgress: false },
+  { icon: Layers, title: 'BOM Management', description: 'Extract and sync bill of materials from SolidWorks.', inProgress: true },
+  { icon: Search, title: 'Advanced Search', description: 'Full-text search across all files and metadata.', inProgress: true },
+  { icon: Shield, title: 'Role-based Permissions', description: 'Granular access control per vault and user.', inProgress: true },
   
   // Operations
-  { icon: HardDrive, title: 'Automated Backups', description: 'Scheduled encrypted backups with restic.', inProgress: false },
-  { icon: Send, title: 'STEP & PDF Export', description: 'Batch export release files from SolidWorks.', inProgress: false },
+  { icon: HardDrive, title: 'Automated Backups', description: 'Scheduled encrypted backups with restic.', inProgress: true },
+  { icon: Send, title: 'STEP & PDF Export', description: 'Batch export release files from SolidWorks.', inProgress: true },
   { icon: Package, title: 'Product Catalog', description: 'Track product lifecycle and configurations.', inProgress: true },
   
   // Integrations (shown as features)
-  { icon: MessageSquare, title: 'Slack Notifications', description: 'Get notified in Slack for reviews and changes.', inProgress: false },
-  { icon: Webhook, title: 'Webhooks', description: 'Custom integrations via webhook events.', inProgress: false },
+  { icon: MessageSquare, title: 'Slack Notifications', description: 'Get notified in Slack for reviews and changes.', inProgress: true },
+  { icon: Webhook, title: 'Webhooks', description: 'Custom integrations via webhook events.', inProgress: true },
 ]
 
 // Integration logos - using Simple Icons CDN for proper brand icons
@@ -213,11 +213,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-3">
-              24+ Features & Counting
+              Features & Roadmap
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Enterprise-grade PLM for teams of all sizes. From version control to supplier management, 
-              BluePLM has everything you need to manage your product lifecycle.
+              Core PLM is ready today. We're actively building change management, 
+              supply chain, and integration features.
             </p>
           </div>
 
@@ -248,15 +248,18 @@ export default function Home() {
           {/* Feature Categories Summary */}
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { label: 'Core PLM', count: '6', description: 'Version control, file states, check-in/out' },
-              { label: 'Change Management', count: '5', description: 'ECOs, ECRs, deviations, workflows' },
-              { label: 'Supply Chain', count: '3', description: 'Suppliers, RFQs, quotes' },
-              { label: 'Integrations', count: '6+', description: 'SolidWorks, Odoo, Slack, API' },
+              { label: 'Core PLM', count: '6', description: 'Version control, file states, check-in/out', status: 'Ready' },
+              { label: 'Change Management', count: '5', description: 'ECOs, ECRs, deviations, workflows', status: 'In Progress' },
+              { label: 'Supply Chain', count: '3', description: 'Suppliers, RFQs, quotes', status: 'In Progress' },
+              { label: 'Integrations', count: '6+', description: 'SolidWorks, Odoo, Slack, API', status: 'In Progress' },
             ].map((cat) => (
               <div key={cat.label} className="text-center p-4 rounded-xl glass-light">
                 <div className="text-2xl font-bold text-gradient mb-1">{cat.count}</div>
                 <div className="text-white font-medium text-sm mb-1">{cat.label}</div>
                 <div className="text-gray-500 text-xs">{cat.description}</div>
+                <div className={`text-[10px] mt-2 px-2 py-0.5 rounded-full inline-block ${cat.status === 'Ready' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                  {cat.status}
+                </div>
               </div>
             ))}
           </div>
