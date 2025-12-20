@@ -22,11 +22,11 @@ export default function Header() {
             <img 
               src="/icon.svg" 
               alt="BluePLM" 
-              className="w-10 h-10 rounded-lg self-center"
+              className="w-10 h-10 rounded-lg"
             />
-            <span className="font-brand text-[28px] tracking-tight self-center" style={{ lineHeight: 1 }}>
+            <span className="font-brand text-[28px] tracking-tight translate-y-[1px]">
               <span className="text-white font-bold">Blue</span>
-              <span className="text-gradient font-extrabold">PLM</span>
+              <span className="font-extrabold" style={{ background: 'linear-gradient(135deg, #0091d9 0%, #57c9ff 50%, #93deff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 800 }}>PLM</span>
             </span>
           </Link>
 
