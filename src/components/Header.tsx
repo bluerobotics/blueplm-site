@@ -18,22 +18,32 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 relative">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group z-10">
-            <img 
-              src="/icon.svg" 
-              alt="BluePLM" 
-              className="w-10 h-10 rounded-lg"
-            />
-            <div className="flex flex-col">
-              <span className="font-brand font-bold text-2xl tracking-tight leading-tight">
+          <div className="flex items-center gap-3 z-10">
+            <Link to="/" className="flex items-center gap-3 group">
+              <img 
+                src="/icon.svg" 
+                alt="BluePLM" 
+                className="w-10 h-10 rounded-lg"
+              />
+              <span className="font-brand font-bold text-2xl tracking-tight">
                 <span className="text-white">Blue</span>
                 <span className="text-gradient">PLM</span>
               </span>
-              <span className="text-[10px] text-gray-500 tracking-wide">
-                by <a href="https://bluerobotics.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">Blue Robotics</a>
-              </span>
-            </div>
-          </Link>
+            </Link>
+            <span className="text-gray-500 text-sm">by</span>
+            <a 
+              href="https://bluerobotics.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <img 
+                src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
+                alt="Blue Robotics" 
+                className="h-5"
+              />
+            </a>
+          </div>
 
           {/* Desktop navigation - centered */}
           <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
