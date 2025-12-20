@@ -236,7 +236,7 @@ export default function Home() {
                   Download BluePLM
                 </Link>
                 <a
-                  href="https://discuss.bluerobotics.com/c/blueplm/40"
+                  href="https://discuss.bluerobotics.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-gray-300 hover:text-white transition-colors"

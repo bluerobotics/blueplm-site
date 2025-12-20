@@ -5,7 +5,7 @@ import { Menu, X, Github, ExternalLink, MessageCircle } from 'lucide-react'
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Downloads', href: '/downloads' },
-  { name: 'Forum', href: 'https://discuss.bluerobotics.com/c/blueplm/40', external: true },
+  { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true },
   { name: 'Donate', href: '/donate' },
 ]
 
