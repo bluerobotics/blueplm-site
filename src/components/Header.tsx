@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Github, ExternalLink } from 'lucide-react'
+import { Menu, X, Github, ExternalLink, MessageCircle } from 'lucide-react'
 
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Downloads', href: '/downloads' },
-  { name: 'Docs', href: '/docs' },
+  { name: 'Forum', href: 'https://discuss.bluerobotics.com/c/blueplm/40', external: true },
   { name: 'Donate', href: '/donate' },
 ]
 
@@ -33,8 +33,26 @@ export default function Header() {
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center gap-1">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href || 
+              const isActive = !item.external && (
+                location.pathname === item.href || 
                 (item.href !== '/' && location.pathname.startsWith(item.href))
+              )
+              
+              if (item.external) {
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    {item.name}
+                  </a>
+                )
+              }
+              
               return (
                 <Link
                   key={item.name}
@@ -86,8 +104,27 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-white/10">
             <div className="flex flex-col gap-1">
               {navigation.map((item) => {
-                const isActive = location.pathname === item.href || 
+                const isActive = !item.external && (
+                  location.pathname === item.href || 
                   (item.href !== '/' && location.pathname.startsWith(item.href))
+                )
+                
+                if (item.external) {
+                  return (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      {item.name}
+                    </a>
+                  )
+                }
+                
                 return (
                   <Link
                     key={item.name}
@@ -120,4 +157,3 @@ export default function Header() {
     </header>
   )
 }
-

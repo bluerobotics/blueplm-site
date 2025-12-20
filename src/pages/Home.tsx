@@ -235,13 +235,15 @@ export default function Home() {
                   <Download className="w-5 h-5" />
                   Download BluePLM
                 </Link>
-                <Link
-                  to="/docs"
+                <a
+                  href="https://discuss.bluerobotics.com/c/blueplm/40"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-gray-300 hover:text-white transition-colors"
                 >
-                  Read the Docs
+                  Join the Forum
                   <ChevronRight className="w-4 h-4" />
-                </Link>
+                </a>
               </div>
             </div>
           </div>
