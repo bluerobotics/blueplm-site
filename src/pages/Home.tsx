@@ -175,15 +175,14 @@ export default function Home() {
               href="https://bluerobotics.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-base text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
+              className="inline-flex items-center gap-3 text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
             >
-              <span>Made with</span>
-              <Heart className="w-5 h-5 text-blue-400" strokeWidth={2} />
-              <span>by</span>
+              <span className="text-2xl font-bold text-white">BluePLM</span>
+              <span className="text-base">by</span>
               <img 
                 src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
                 alt="Blue Robotics" 
-                className="h-8 opacity-70 hover:opacity-100 transition-opacity"
+                className="h-7 opacity-80 hover:opacity-100 transition-opacity"
                 loading="eager"
               />
             </a>
