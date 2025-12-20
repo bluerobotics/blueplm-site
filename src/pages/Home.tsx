@@ -167,10 +167,27 @@ export default function Home() {
               Version control, ECOs, RFQs, supplier portal, workflows, reviews, 
               deviations, SolidWorks integration, ERP sync, and so much more.
             </p>
-            <p className="text-base text-gray-500 max-w-xl mx-auto mb-10 animate-slide-up delay-200">
+            <p className="text-base text-gray-500 max-w-xl mx-auto mb-6 animate-slide-up delay-200">
               Enterprise PLM costs <span className="line-through text-gray-600">$10,000+/year</span>. 
               BluePLM is <span className="text-green-400 font-semibold">free forever</span>.
             </p>
+
+            {/* Made by Blue Robotics */}
+            <a 
+              href="https://bluerobotics.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-300 transition-colors mb-10 animate-slide-up delay-200"
+            >
+              <span>Made with</span>
+              <span className="text-blue-400">💙</span>
+              <span>by</span>
+              <img 
+                src="https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png" 
+                alt="Blue Robotics" 
+                className="h-5 opacity-70 hover:opacity-100 transition-opacity"
+              />
+            </a>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up delay-200">
