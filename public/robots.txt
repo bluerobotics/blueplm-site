@@ -1,0 +1,12 @@
+# BluePLM Robots.txt
+# https://blueplm.io
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://blueplm.io/sitemap.xml
+
+# Crawl-delay for politeness
+Crawl-delay: 1
+
