@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { 
-  Download, Monitor, Apple, Box, 
+  Download, Monitor, Apple, 
   CheckCircle, Clock, FileDown, ExternalLink,
   Github, Star, GitFork, ArrowDownToLine
 } from 'lucide-react'
@@ -11,7 +11,6 @@ interface Release {
   assets: {
     windows: string
     mac: string
-    linux: string
   }
 }
 
@@ -21,14 +20,12 @@ const currentRelease: Release = {
   assets: {
     windows: 'https://github.com/bluerobotics/bluePLM/releases/download/v2.12.0/BluePLM-2.12.0-win.exe',
     mac: 'https://github.com/bluerobotics/bluePLM/releases/download/v2.12.0/BluePLM-2.12.0-mac.dmg',
-    linux: 'https://github.com/bluerobotics/bluePLM/releases/download/v2.12.0/BluePLM-2.12.0-linux.AppImage',
   },
 }
 
 const systemRequirements = {
   windows: ['Windows 10 or later', '64-bit processor', '4 GB RAM minimum', '500 MB disk space'],
   mac: ['macOS 10.15 (Catalina) or later', 'Apple Silicon or Intel', '4 GB RAM minimum', '500 MB disk space'],
-  linux: ['Ubuntu 20.04+ or equivalent', '64-bit processor', '4 GB RAM minimum', '500 MB disk space'],
 }
 
 const recentReleases = [
@@ -39,7 +36,7 @@ const recentReleases = [
   { version: '2.8.0', date: '2025-12-16', highlights: 'Keybindings settings, file operation icons overhaul' },
 ]
 
-type Platform = 'windows' | 'mac' | 'linux'
+type Platform = 'windows' | 'mac'
 
 export default function Downloads() {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('windows')
@@ -50,8 +47,6 @@ export default function Downloads() {
     const userAgent = navigator.userAgent.toLowerCase()
     if (userAgent.includes('mac')) {
       setSelectedPlatform('mac')
-    } else if (userAgent.includes('linux')) {
-      setSelectedPlatform('linux')
     }
 
     // Fetch real GitHub stats
@@ -94,7 +89,6 @@ export default function Downloads() {
   const platforms: { id: Platform; name: string; icon: typeof Monitor }[] = [
     { id: 'windows', name: 'Windows', icon: Monitor },
     { id: 'mac', name: 'macOS', icon: Apple },
-    { id: 'linux', name: 'Linux', icon: Box },
   ]
 
   return (
