@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Github, ExternalLink, MessageCircle } from 'lucide-react'
+import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen } from 'lucide-react'
 
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Downloads', href: '/downloads' },
-  { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true },
+  { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
+  { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
   { name: 'Donate', href: '/donate' },
 ]
 
@@ -44,6 +45,7 @@ export default function Header() {
               )
               
               if (item.external) {
+                const Icon = item.icon === 'docs' ? BookOpen : MessageCircle
                 return (
                   <a
                     key={item.name}
@@ -52,7 +54,7 @@ export default function Header() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <Icon className="w-4 h-4" />
                     {item.name}
                   </a>
                 )
@@ -115,6 +117,7 @@ export default function Header() {
                 )
                 
                 if (item.external) {
+                  const Icon = item.icon === 'docs' ? BookOpen : MessageCircle
                   return (
                     <a
                       key={item.name}
@@ -124,7 +127,7 @@ export default function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5"
                     >
-                      <MessageCircle className="w-4 h-4" />
+                      <Icon className="w-4 h-4" />
                       {item.name}
                     </a>
                   )
