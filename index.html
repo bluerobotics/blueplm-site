@@ -34,9 +34,12 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://blueplm.io/" />
     
-    <!-- Favicon -->
+    <!-- Favicon - Multiple formats for Google Search compatibility -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/icon-48.png" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <link rel="apple-touch-icon" href="/icon.svg" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -72,6 +75,8 @@
       "applicationCategory": "BusinessApplication",
       "applicationSubCategory": "Product Lifecycle Management",
       "operatingSystem": "Windows, macOS, Linux",
+      "image": "https://blueplm.io/icon-512.png",
+      "logo": "https://blueplm.io/icon-512.png",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -97,18 +102,28 @@
     }
     </script>
     
-    <!-- Structured Data - Organization -->
+    <!-- Structured Data - Organization (BluePLM) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "Blue Robotics",
-      "url": "https://bluerobotics.com",
-      "logo": "https://raw.githubusercontent.com/bluerobotics/bluePLM/main/assets/blue-robotics-white-name-logo.png",
+      "name": "BluePLM",
+      "url": "https://blueplm.io",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://blueplm.io/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": "https://blueplm.io/icon-512.png",
       "sameAs": [
-        "https://github.com/bluerobotics",
-        "https://twitter.com/BlueRoboticsCo"
-      ]
+        "https://github.com/bluerobotics/bluePLM"
+      ],
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "Blue Robotics",
+        "url": "https://bluerobotics.com"
+      }
     }
     </script>
     
@@ -120,9 +135,17 @@
       "name": "BluePLM",
       "url": "https://blueplm.io/",
       "description": "Free, open-source Product Lifecycle Management software",
+      "image": "https://blueplm.io/icon-512.png",
       "publisher": {
         "@type": "Organization",
-        "name": "Blue Robotics"
+        "name": "BluePLM",
+        "url": "https://blueplm.io",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://blueplm.io/icon-512.png",
+          "width": 512,
+          "height": 512
+        }
       }
     }
     </script>
