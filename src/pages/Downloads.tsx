@@ -49,8 +49,8 @@ export default function Downloads() {
         const repoRes = await fetch('https://api.github.com/repos/bluerobotics/bluePLM')
         const repoData = await repoRes.json()
         
-        // Get all releases
-        const releasesRes = await fetch('https://api.github.com/repos/bluerobotics/bluePLM/releases')
+        // Get all releases (per_page=100 to get more than default 30)
+        const releasesRes = await fetch('https://api.github.com/repos/bluerobotics/bluePLM/releases?per_page=100')
         const releasesData = await releasesRes.json()
         
         let totalDownloads = 0

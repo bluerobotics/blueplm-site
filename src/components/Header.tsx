@@ -7,7 +7,6 @@ const navigation = [
   { name: 'Downloads', href: '/downloads' },
   { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
   { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
-  { name: 'Donate', href: '/donate' },
 ]
 
 export default function Header() {

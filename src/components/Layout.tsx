@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
-import DonationBar from './DonationBar'
 
 export default function Layout() {
   return (
@@ -14,7 +13,6 @@ export default function Layout() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-500/5 rounded-full" style={{ filter: 'blur(100px)' }} />
       </div>
       
-      <DonationBar current={0} goal={1000} />
       <Header />
       <main className="flex-1">
         <Outlet />
