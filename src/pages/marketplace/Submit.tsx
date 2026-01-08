@@ -74,12 +74,7 @@ export default function Submit() {
     } catch (err) {
       console.error('Submission failed:', err)
       if (err instanceof ApiError) {
-        if (err.status === 401) {
-          // Authentication required - show helpful message
-          setError('To submit an extension, you need to register as a publisher first. This feature will be available soon. For now, please contact us at extensions@blueplm.io')
-        } else {
-          setError(err.message)
-        }
+        setError(err.message)
       } else {
         setError('Failed to submit extension. Please try again.')
       }
@@ -334,19 +329,21 @@ export default function Submit() {
               </div>
             </div>
 
-            {/* Alternative Contact */}
+            {/* Need Help? */}
             <div className="p-5 rounded-xl bg-white/5 border border-white/10">
               <h3 className="font-semibold text-white mb-2">Need Help?</h3>
-              <p className="text-sm text-gray-400 mb-3">
-                Have questions about the submission process or need assistance?
+              <p className="text-sm text-gray-400">
+                Have questions about the submission process? Check the{' '}
+                <a
+                  href="https://discuss.bluerobotics.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-ocean-400 hover:text-ocean-300"
+                >
+                  community forum
+                </a>
+                {' '}for assistance.
               </p>
-              <a
-                href="mailto:extensions@blueplm.io"
-                className="inline-flex items-center gap-2 text-sm text-ocean-400 hover:text-ocean-300"
-              >
-                Contact us at extensions@blueplm.io
-                <ExternalLink className="w-3 h-3" />
-              </a>
             </div>
           </div>
         </div>
