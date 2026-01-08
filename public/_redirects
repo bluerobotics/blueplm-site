@@ -2,3 +2,7 @@
 /docs https://docs.blueplm.io 301
 /docs/* https://docs.blueplm.io/:splat 301
 
+
+# Marketplace subdomain - serve marketplace content
+https://marketplace.blueplm.io/ /marketplace 200
+https://marketplace.blueplm.io/* /marketplace/:splat 200
