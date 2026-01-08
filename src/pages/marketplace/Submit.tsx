@@ -314,21 +314,6 @@ export default function Submit() {
               <ExternalLink className="w-4 h-4 text-gray-400" />
             </a>
 
-            {/* Verified Badge Info */}
-            <div className="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-              <div className="flex items-start gap-3">
-                <Shield className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-emerald-300 mb-1">Get Verified</h4>
-                  <p className="text-xs text-emerald-200/80">
-                    Extensions with public source code and from established publishers 
-                    can apply for verification. Verified extensions get increased 
-                    visibility and user trust.
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Need Help? */}
             <div className="p-5 rounded-xl bg-white/5 border border-white/10">
               <h3 className="font-semibold text-white mb-2">Need Help?</h3>
