@@ -175,11 +175,19 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export async function fetchExtensions(params: SearchParams = {}): Promise<PaginatedResponse<ExtensionListItem>> {
   const searchParams = new URLSearchParams();
   
+  // Map frontend sort values to API values
+  const sortMap: Record<string, string> = {
+    'popular': 'downloads',
+    'recent': 'newest',
+    'name': 'name',
+    'downloads': 'downloads',
+  };
+  
   if (params.q) searchParams.set('q', params.q);
   if (params.categories) searchParams.set('categories', params.categories);
   if (params.type) searchParams.set('type', params.type);
   if (params.verified) searchParams.set('verified', 'true');
-  if (params.sort) searchParams.set('sort', params.sort);
+  if (params.sort) searchParams.set('sort', sortMap[params.sort] || 'downloads');
   if (params.page) searchParams.set('page', String(params.page));
   if (params.limit) searchParams.set('limit', String(params.limit));
   

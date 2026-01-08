@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen } from 'lucide-react'
+import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store } from 'lucide-react'
 
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Downloads', href: '/downloads' },
-  { name: 'Marketplace', href: '/marketplace' },
+  { name: 'Marketplace', href: 'https://marketplace.blueplm.io/', external: true, icon: 'marketplace' },
   { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
   { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
 ]
@@ -45,7 +45,7 @@ export default function Header() {
               )
               
               if (item.external) {
-                const Icon = item.icon === 'docs' ? BookOpen : MessageCircle
+                const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'marketplace' ? Store : MessageCircle
                 return (
                   <a
                     key={item.name}
@@ -117,7 +117,7 @@ export default function Header() {
                 )
                 
                 if (item.external) {
-                  const Icon = item.icon === 'docs' ? BookOpen : MessageCircle
+                  const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'marketplace' ? Store : MessageCircle
                   return (
                     <a
                       key={item.name}

@@ -33,6 +33,7 @@ app.use('*', cors({
     const allowedOrigins = [
       'https://marketplace.blueplm.io',
       'https://blueplm.io',
+      'https://blueplm-site.pages.dev',  // Cloudflare Pages
       'http://localhost:5173',
       'http://localhost:3000',
       'tauri://localhost', // Tauri app
