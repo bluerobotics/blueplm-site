@@ -328,3 +328,155 @@ export async function reportExtension(
   const result = await handleResponse<ApiResponse<{ id: string }>>(response);
   return result.data;
 }
+
+// ============================================================================
+// Admin API types
+// ============================================================================
+
+export type SubmissionStatus = 'pending' | 'approved' | 'rejected' | 'needs_changes';
+
+export interface ExtensionSubmission {
+  id: string;
+  submitter_email: string;
+  submitter_name: string | null;
+  repository_url: string;
+  name: string;
+  display_name: string;
+  description: string | null;
+  category: 'sandboxed' | 'native';
+  publisher_id: string | null;
+  status: SubmissionStatus;
+  reviewer_email: string | null;
+  reviewer_notes: string | null;
+  reviewed_at: string | null;
+  extension_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SubmissionListParams {
+  status?: SubmissionStatus;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+// ============================================================================
+// Admin API functions (requires @bluerobotics.com authentication)
+// ============================================================================
+
+/**
+ * Create authenticated headers for admin API calls
+ */
+function getAdminHeaders(accessToken: string): HeadersInit {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${accessToken}`,
+  };
+}
+
+/**
+ * List submissions with filters and pagination (admin only)
+ */
+export async function fetchSubmissions(
+  accessToken: string,
+  params: SubmissionListParams = {}
+): Promise<PaginatedResponse<ExtensionSubmission>> {
+  const searchParams = new URLSearchParams();
+  
+  if (params.status) searchParams.set('status', params.status);
+  if (params.search) searchParams.set('search', params.search);
+  if (params.page) searchParams.set('page', String(params.page));
+  if (params.limit) searchParams.set('limit', String(params.limit));
+  
+  const response = await fetch(`${API_BASE}/admin/submissions?${searchParams}`, {
+    headers: getAdminHeaders(accessToken),
+  });
+  
+  return handleResponse<PaginatedResponse<ExtensionSubmission>>(response);
+}
+
+/**
+ * Get pending submission count (admin only)
+ */
+export async function fetchPendingCount(
+  accessToken: string
+): Promise<number> {
+  const response = await fetch(`${API_BASE}/admin/submissions/count`, {
+    headers: getAdminHeaders(accessToken),
+  });
+  
+  const result = await handleResponse<ApiResponse<{ count: number }>>(response);
+  return result.data?.count || 0;
+}
+
+/**
+ * Get submission details (admin only)
+ */
+export async function fetchSubmission(
+  accessToken: string,
+  id: string
+): Promise<ExtensionSubmission> {
+  const response = await fetch(`${API_BASE}/admin/submissions/${id}`, {
+    headers: getAdminHeaders(accessToken),
+  });
+  
+  const result = await handleResponse<ApiResponse<ExtensionSubmission>>(response);
+  return result.data!;
+}
+
+/**
+ * Approve a submission (admin only)
+ */
+export async function approveSubmission(
+  accessToken: string,
+  id: string,
+  data: { notes?: string; publisher_id?: string }
+): Promise<{ submission: ExtensionSubmission; extension_id: string }> {
+  const response = await fetch(`${API_BASE}/admin/submissions/${id}/approve`, {
+    method: 'POST',
+    headers: getAdminHeaders(accessToken),
+    body: JSON.stringify(data),
+  });
+  
+  const result = await handleResponse<ApiResponse<{ submission: ExtensionSubmission; extension_id: string }>>(response);
+  return result.data!;
+}
+
+/**
+ * Reject a submission (admin only)
+ * Notes are required (min 10 characters)
+ */
+export async function rejectSubmission(
+  accessToken: string,
+  id: string,
+  notes: string
+): Promise<ExtensionSubmission> {
+  const response = await fetch(`${API_BASE}/admin/submissions/${id}/reject`, {
+    method: 'POST',
+    headers: getAdminHeaders(accessToken),
+    body: JSON.stringify({ notes }),
+  });
+  
+  const result = await handleResponse<ApiResponse<ExtensionSubmission>>(response);
+  return result.data!;
+}
+
+/**
+ * Request changes on a submission (admin only)
+ * Notes are required (min 10 characters)
+ */
+export async function requestChangesSubmission(
+  accessToken: string,
+  id: string,
+  notes: string
+): Promise<ExtensionSubmission> {
+  const response = await fetch(`${API_BASE}/admin/submissions/${id}/request-changes`, {
+    method: 'POST',
+    headers: getAdminHeaders(accessToken),
+    body: JSON.stringify({ notes }),
+  });
+  
+  const result = await handleResponse<ApiResponse<ExtensionSubmission>>(response);
+  return result.data!;
+}
