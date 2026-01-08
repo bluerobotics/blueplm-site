@@ -1,29 +1,46 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store, Shield, Home } from 'lucide-react'
+import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store } from 'lucide-react'
 
 // Check if we're on the extensions subdomain
 const isExtensionsSubdomain = window.location.hostname.startsWith('extensions.') || window.location.hostname.startsWith('marketplace.')
 
-// Main site URL for cross-domain links
+// URLs for cross-domain navigation
 const mainSiteUrl = 'https://blueplm.io'
+const extensionsSiteUrl = 'https://extensions.blueplm.io'
 
-// Navigation changes based on subdomain
-const navigation = isExtensionsSubdomain
-  ? [
-      { name: 'Home', href: mainSiteUrl, external: true, icon: 'home' },
-      { name: 'Extensions', href: '/' },
-      { name: 'Submit', href: '/submit' },
-      { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
-      { name: 'Admin', href: '/admin', icon: 'admin' },
-    ]
-  : [
-      { name: 'Home', href: '/' },
-      { name: 'Downloads', href: '/downloads' },
-      { name: 'Extensions', href: '/marketplace', icon: 'marketplace' },
-      { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
-      { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
-    ]
+// Same navigation on both sites - identical order and items
+// Only the href changes based on which site you're on
+const navigation = [
+  { 
+    name: 'Home', 
+    href: isExtensionsSubdomain ? mainSiteUrl : '/',
+    crossDomain: isExtensionsSubdomain,
+  },
+  { 
+    name: 'Downloads', 
+    href: isExtensionsSubdomain ? `${mainSiteUrl}/downloads` : '/downloads',
+    crossDomain: isExtensionsSubdomain,
+  },
+  { 
+    name: 'Extensions', 
+    href: isExtensionsSubdomain ? '/' : extensionsSiteUrl,
+    crossDomain: !isExtensionsSubdomain,
+    icon: 'extensions',
+  },
+  { 
+    name: 'Docs', 
+    href: 'https://docs.blueplm.io/', 
+    external: true, 
+    icon: 'docs' 
+  },
+  { 
+    name: 'Forum', 
+    href: 'https://discuss.bluerobotics.com/', 
+    external: true, 
+    icon: 'forum' 
+  },
+]
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -73,37 +90,51 @@ export default function Header() {
           {/* Desktop navigation - centered */}
           <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
             {navigation.map((item) => {
-              const isActive = !item.external && (
+              const isActive = !item.external && !item.crossDomain && (
                 location.pathname === item.href || 
                 (item.href !== '/' && location.pathname.startsWith(item.href))
               )
               
+              // Get icon if present
+              const getIcon = () => {
+                if (item.icon === 'extensions') return <Store className="w-4 h-4" />
+                if (item.icon === 'docs') return <BookOpen className="w-4 h-4" />
+                if (item.icon === 'forum') return <MessageCircle className="w-4 h-4" />
+                return null
+              }
+              const icon = getIcon()
+              
+              // External links (open in new tab)
               if (item.external) {
-                const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : item.icon === 'home' ? Home : BookOpen
-                // Home link doesn't need new tab
-                const isHomeLink = item.icon === 'home'
                 return (
                   <a
                     key={item.name}
                     href={item.href}
-                    target={isHomeLink ? undefined : "_blank"}
-                    rel={isHomeLink ? undefined : "noopener noreferrer"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
                   >
-                    <Icon className="w-4 h-4" />
+                    {icon}
                     {item.name}
                   </a>
                 )
               }
               
-              // Get icon for internal links with icons
-              const getIcon = () => {
-                if (item.icon === 'marketplace') return <Store className="w-4 h-4" />
-                if (item.icon === 'admin') return <Shield className="w-4 h-4" />
-                return null
+              // Cross-domain links (same tab, but use <a> tag)
+              if (item.crossDomain) {
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-gray-400 hover:text-white hover:bg-white/5`}
+                  >
+                    {icon}
+                    {item.name}
+                  </a>
+                )
               }
-              const icon = getIcon()
               
+              // Internal links (use React Router)
               return (
                 <Link
                   key={item.name}
@@ -166,37 +197,53 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-white/10">
             <div className="flex flex-col gap-1">
               {navigation.map((item) => {
-                const isActive = !item.external && (
+                const isActive = !item.external && !item.crossDomain && (
                   location.pathname === item.href || 
                   (item.href !== '/' && location.pathname.startsWith(item.href))
                 )
                 
+                // Get icon if present
+                const getIcon = () => {
+                  if (item.icon === 'extensions') return <Store className="w-4 h-4" />
+                  if (item.icon === 'docs') return <BookOpen className="w-4 h-4" />
+                  if (item.icon === 'forum') return <MessageCircle className="w-4 h-4" />
+                  return null
+                }
+                const icon = getIcon()
+                
+                // External links (open in new tab)
                 if (item.external) {
-                  const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : item.icon === 'home' ? Home : BookOpen
-                  const isHomeLink = item.icon === 'home'
                   return (
                     <a
                       key={item.name}
                       href={item.href}
-                      target={isHomeLink ? undefined : "_blank"}
-                      rel={isHomeLink ? undefined : "noopener noreferrer"}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5"
                     >
-                      <Icon className="w-4 h-4" />
+                      {icon}
                       {item.name}
                     </a>
                   )
                 }
                 
-                // Get icon for internal links with icons
-                const getIcon = () => {
-                  if (item.icon === 'marketplace') return <Store className="w-4 h-4" />
-                  if (item.icon === 'admin') return <Shield className="w-4 h-4" />
-                  return null
+                // Cross-domain links (same tab)
+                if (item.crossDomain) {
+                  return (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5"
+                    >
+                      {icon}
+                      {item.name}
+                    </a>
+                  )
                 }
-                const icon = getIcon()
                 
+                // Internal links
                 return (
                   <Link
                     key={item.name}
