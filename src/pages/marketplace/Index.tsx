@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Sparkles, TrendingUp, Clock, Package, 
-  ArrowRight, Loader2, AlertCircle
+  ArrowRight, Loader2, AlertCircle, Shield
 } from 'lucide-react'
 import ExtensionCard, { ExtensionCardData } from '../../components/marketplace/ExtensionCard'
 import SearchFilters, { FilterState } from '../../components/marketplace/SearchFilters'
@@ -291,7 +291,7 @@ export default function MarketplaceIndex() {
         <section className="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <h3 className="font-semibold text-white">Have an extension to share?</h3>
-            <p className="text-sm text-gray-400">Submit it to the marketplace</p>
+            <p className="text-sm text-gray-400">Submit it to the extensions store</p>
           </div>
           <Link
             to="/submit"
@@ -301,6 +301,17 @@ export default function MarketplaceIndex() {
             <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
+
+        {/* Maintainer Login */}
+        <div className="mt-8 text-center">
+          <Link
+            to="/admin"
+            className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-400 transition-colors"
+          >
+            <Shield className="w-4 h-4" />
+            Maintainer Login
+          </Link>
+        </div>
       </div>
     </div>
   )

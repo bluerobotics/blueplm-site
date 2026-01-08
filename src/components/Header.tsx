@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store, Shield } from 'lucide-react'
+import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store } from 'lucide-react'
 
 // Check if we're on the extensions subdomain
 const isExtensionsSubdomain = window.location.hostname.startsWith('extensions.') || window.location.hostname.startsWith('marketplace.')
@@ -154,16 +154,6 @@ export default function Header() {
 
           {/* Right side links */}
           <div className="hidden md:flex items-center gap-3 z-10">
-            {/* Maintainer login - only on extensions subdomain */}
-            {isExtensionsSubdomain && (
-              <Link
-                to="/admin"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
-              >
-                <Shield className="w-4 h-4" />
-                Maintainer
-              </Link>
-            )}
             <a
               href="https://github.com/bluerobotics/bluePLM"
               target="_blank"
@@ -271,17 +261,6 @@ export default function Header() {
                 )
               })}
               <hr className="my-2 border-white/10" />
-              {/* Maintainer login - only on extensions subdomain */}
-              {isExtensionsSubdomain && (
-                <Link
-                  to="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5"
-                >
-                  <Shield className="w-4 h-4" />
-                  Maintainer
-                </Link>
-              )}
               <a
                 href="https://github.com/bluerobotics/bluePLM"
                 target="_blank"
