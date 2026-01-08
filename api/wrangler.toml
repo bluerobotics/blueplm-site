@@ -1,0 +1,30 @@
+# Cloudflare Workers configuration for BluePLM Extension Store API
+name = "blueplm-store-api"
+main = "src/server.ts"
+compatibility_date = "2024-06-01"
+
+# Environment variables (set via dashboard or wrangler secret)
+# SUPABASE_URL = "https://xxx.supabase.co"
+# SUPABASE_ANON_KEY = "eyJ..."
+# SUPABASE_SERVICE_KEY = "eyJ..." (for admin operations)
+# ADMIN_API_KEY = "..." (for Blue Robotics admin endpoints)
+
+[vars]
+ENVIRONMENT = "production"
+RATE_LIMIT_DOWNLOADS_PER_MINUTE = 30
+RATE_LIMIT_SUBMISSIONS_PER_HOUR = 10
+CACHE_TTL_SECONDS = 60
+
+# Development environment
+[env.dev]
+name = "blueplm-store-api-dev"
+[env.dev.vars]
+ENVIRONMENT = "development"
+RATE_LIMIT_DOWNLOADS_PER_MINUTE = 100
+CACHE_TTL_SECONDS = 10
+
+# Staging environment
+[env.staging]
+name = "blueplm-store-api-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"

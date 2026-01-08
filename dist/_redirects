@@ -1,0 +1,4 @@
+# Redirect /docs to docs subdomain
+/docs https://docs.blueplm.io 301
+/docs/* https://docs.blueplm.io/:splat 301
+

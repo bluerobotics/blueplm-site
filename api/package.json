@@ -1,0 +1,23 @@
+{
+  "name": "@blueplm/store-api",
+  "version": "1.0.0",
+  "description": "BluePLM Extension Store API for marketplace.blueplm.io",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "hono": "^4.4.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0",
+    "wrangler": "^3.60.0"
+  }
+}

@@ -5,6 +5,7 @@ import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen } from 'lucide-r
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Downloads', href: '/downloads' },
+  { name: 'Marketplace', href: '/marketplace' },
   { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
   { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
 ]

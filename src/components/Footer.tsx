@@ -20,6 +20,9 @@ export default function Footer() {
             <Link to="/downloads" className="hover:text-white transition-colors">
               Downloads
             </Link>
+            <Link to="/marketplace" className="hover:text-white transition-colors">
+              Marketplace
+            </Link>
             <Link to="/donate" className="hover:text-white transition-colors">
               Donate
             </Link>
