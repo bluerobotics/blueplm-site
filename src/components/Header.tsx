@@ -1,13 +1,17 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store, Shield } from 'lucide-react'
+import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store, Shield, Home } from 'lucide-react'
 
 // Check if we're on the extensions subdomain
 const isExtensionsSubdomain = window.location.hostname.startsWith('extensions.') || window.location.hostname.startsWith('marketplace.')
 
+// Main site URL for cross-domain links
+const mainSiteUrl = 'https://blueplm.io'
+
 // Navigation changes based on subdomain
 const navigation = isExtensionsSubdomain
   ? [
+      { name: 'Home', href: mainSiteUrl, external: true, icon: 'home' },
       { name: 'Extensions', href: '/' },
       { name: 'Submit', href: '/submit' },
       { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
@@ -29,23 +33,42 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-[#0d1526]/95 border-b border-white/5">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 relative">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group z-10">
-            <img 
-              src="/icon.svg" 
-              alt="BluePLM" 
-              className="w-10 h-10 rounded-lg"
-            />
-            <span className="font-brand text-[28px] tracking-tight" style={{ transform: 'translateY(3px)' }}>
-              <span className="text-white" style={{ fontWeight: 700 }}>Blue</span>
-              <span style={{ 
-                background: 'linear-gradient(135deg, #0091d9 0%, #57c9ff 50%, #93deff 100%)', 
-                WebkitBackgroundClip: 'text', 
-                WebkitTextFillColor: 'transparent',
-                fontWeight: 700
-              }}>PLM</span>
-            </span>
-          </Link>
+          {/* Logo - links to main site when on subdomain */}
+          {isExtensionsSubdomain ? (
+            <a href={mainSiteUrl} className="flex items-center gap-2.5 group z-10">
+              <img 
+                src="/icon.svg" 
+                alt="BluePLM" 
+                className="w-10 h-10 rounded-lg"
+              />
+              <span className="font-brand text-[28px] tracking-tight" style={{ transform: 'translateY(3px)' }}>
+                <span className="text-white" style={{ fontWeight: 700 }}>Blue</span>
+                <span style={{ 
+                  background: 'linear-gradient(135deg, #0091d9 0%, #57c9ff 50%, #93deff 100%)', 
+                  WebkitBackgroundClip: 'text', 
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 700
+                }}>PLM</span>
+              </span>
+            </a>
+          ) : (
+            <Link to="/" className="flex items-center gap-2.5 group z-10">
+              <img 
+                src="/icon.svg" 
+                alt="BluePLM" 
+                className="w-10 h-10 rounded-lg"
+              />
+              <span className="font-brand text-[28px] tracking-tight" style={{ transform: 'translateY(3px)' }}>
+                <span className="text-white" style={{ fontWeight: 700 }}>Blue</span>
+                <span style={{ 
+                  background: 'linear-gradient(135deg, #0091d9 0%, #57c9ff 50%, #93deff 100%)', 
+                  WebkitBackgroundClip: 'text', 
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 700
+                }}>PLM</span>
+              </span>
+            </Link>
+          )}
 
           {/* Desktop navigation - centered */}
           <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
@@ -56,13 +79,15 @@ export default function Header() {
               )
               
               if (item.external) {
-                const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : BookOpen
+                const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : item.icon === 'home' ? Home : BookOpen
+                // Home link doesn't need new tab
+                const isHomeLink = item.icon === 'home'
                 return (
                   <a
                     key={item.name}
                     href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    target={isHomeLink ? undefined : "_blank"}
+                    rel={isHomeLink ? undefined : "noopener noreferrer"}
                     className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
                   >
                     <Icon className="w-4 h-4" />
@@ -107,13 +132,23 @@ export default function Header() {
               <Github className="w-4 h-4" />
               GitHub
             </a>
-            <Link
-              to="/downloads"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-ocean-500 to-brand-600 text-white hover:from-ocean-400 hover:to-brand-500 transition-all duration-200 glow-sm"
-            >
-              Download
-              <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
+            {isExtensionsSubdomain ? (
+              <a
+                href={`${mainSiteUrl}/downloads`}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-ocean-500 to-brand-600 text-white hover:from-ocean-400 hover:to-brand-500 transition-all duration-200 glow-sm"
+              >
+                Download
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            ) : (
+              <Link
+                to="/downloads"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-ocean-500 to-brand-600 text-white hover:from-ocean-400 hover:to-brand-500 transition-all duration-200 glow-sm"
+              >
+                Download
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -137,13 +172,14 @@ export default function Header() {
                 )
                 
                 if (item.external) {
-                  const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : BookOpen
+                  const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : item.icon === 'home' ? Home : BookOpen
+                  const isHomeLink = item.icon === 'home'
                   return (
                     <a
                       key={item.name}
                       href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      target={isHomeLink ? undefined : "_blank"}
+                      rel={isHomeLink ? undefined : "noopener noreferrer"}
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5"
                     >
