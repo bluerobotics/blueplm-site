@@ -11,6 +11,10 @@ import Extension from './pages/marketplace/Extension'
 import Publisher from './pages/marketplace/Publisher'
 import Submit from './pages/marketplace/Submit'
 
+// Admin
+import AdminLayout from './layouts/AdminLayout'
+import { Login, Callback, Dashboard, Submissions, Submission, Settings } from './pages/admin'
+
 // Check if we're on the marketplace subdomain
 const isMarketplaceSubdomain = window.location.hostname.startsWith('marketplace.')
 
@@ -24,6 +28,15 @@ function App() {
           <Route path="extensions/:id" element={<Extension />} />
           <Route path="publishers/:id" element={<Publisher />} />
           <Route path="submit" element={<Submit />} />
+        </Route>
+        {/* Admin routes on subdomain */}
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin/callback" element={<Callback />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="submissions" element={<Submissions />} />
+          <Route path="submissions/:id" element={<Submission />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         {/* Redirect /marketplace to root on subdomain */}
         <Route path="/marketplace/*" element={<Navigate to="/" replace />} />
@@ -46,6 +59,16 @@ function App() {
         <Route path="extensions/:id" element={<Extension />} />
         <Route path="publishers/:id" element={<Publisher />} />
         <Route path="submit" element={<Submit />} />
+      </Route>
+
+      {/* Admin routes */}
+      <Route path="/admin/login" element={<Login />} />
+      <Route path="/admin/callback" element={<Callback />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="submissions" element={<Submissions />} />
+        <Route path="submissions/:id" element={<Submission />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   )
