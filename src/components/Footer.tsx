@@ -21,7 +21,7 @@ export default function Footer() {
               Downloads
             </Link>
             <Link to="/marketplace" className="hover:text-white transition-colors">
-              Marketplace
+              Extensions
             </Link>
             <Link to="/donate" className="hover:text-white transition-colors">
               Donate

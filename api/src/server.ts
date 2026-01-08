@@ -31,7 +31,7 @@ app.use('*', cors({
   origin: (origin) => {
     // Allow requests from BluePLM app and marketplace
     const allowedOrigins = [
-      'https://marketplace.blueplm.io',
+      'https://extensions.blueplm.io',
       'https://blueplm.io',
       'https://blueplm-site.pages.dev',  // Cloudflare Pages
       'http://localhost:5173',

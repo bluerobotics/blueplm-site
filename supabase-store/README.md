@@ -1,6 +1,6 @@
 # BluePLM Extension Store Database
 
-This directory contains the database schema for the BluePLM Extension Store, hosted at `marketplace.blueplm.io`.
+This directory contains the database schema for the BluePLM Extension Store, hosted at `extensions.blueplm.io`.
 
 > **Note**: This is a **separate Supabase project** from the main BluePLM organization databases. It is managed by Blue Robotics and shared across all organizations.
 
@@ -11,7 +11,7 @@ This directory contains the database schema for the BluePLM Extension Store, hos
 | **Purpose** | Public extension marketplace |
 | **Hosted by** | Blue Robotics |
 | **Access** | Public read, authenticated write |
-| **URL** | marketplace.blueplm.io |
+| **URL** | extensions.blueplm.io |
 
 ---
 
@@ -37,7 +37,7 @@ The maintainer dashboard uses Google OAuth to authenticate Blue Robotics team me
    | Field | Value |
    |-------|-------|
    | **Name** | BluePLM Marketplace |
-   | **Authorized JavaScript origins** | `https://marketplace.blueplm.io`, `http://localhost:5173` |
+   | **Authorized JavaScript origins** | `https://extensions.blueplm.io`, `http://localhost:5173` |
    | **Authorized redirect URIs** | `https://<your-supabase-project>.supabase.co/auth/v1/callback` |
 
 7. Click **Create** and save the **Client ID** and **Client Secret**
@@ -66,7 +66,7 @@ In Supabase Dashboard:
 
    | Environment | Site URL | Redirect URLs |
    |-------------|----------|---------------|
-   | Production | `https://marketplace.blueplm.io` | `https://marketplace.blueplm.io/admin/callback` |
+   | Production | `https://extensions.blueplm.io` | `https://extensions.blueplm.io/admin/callback` |
    | Development | `http://localhost:5173` | `http://localhost:5173/admin/callback` |
 
 ### Step 4: Verify Configuration
@@ -82,7 +82,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const { data, error } = await supabase.auth.signInWithOAuth({
   provider: 'google',
   options: {
-    redirectTo: 'https://marketplace.blueplm.io/admin/callback',
+    redirectTo: 'https://extensions.blueplm.io/admin/callback',
     queryParams: {
       access_type: 'offline',
       prompt: 'consent',

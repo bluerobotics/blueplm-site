@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store, Shield } from 'lucide-react'
 
-// Check if we're on the marketplace subdomain
-const isMarketplaceSubdomain = window.location.hostname.startsWith('marketplace.')
+// Check if we're on the extensions subdomain
+const isExtensionsSubdomain = window.location.hostname.startsWith('extensions.') || window.location.hostname.startsWith('marketplace.')
 
 // Navigation changes based on subdomain
-const navigation = isMarketplaceSubdomain
+const navigation = isExtensionsSubdomain
   ? [
       { name: 'Extensions', href: '/' },
       { name: 'Submit', href: '/submit' },
@@ -16,7 +16,7 @@ const navigation = isMarketplaceSubdomain
   : [
       { name: 'Home', href: '/' },
       { name: 'Downloads', href: '/downloads' },
-      { name: 'Marketplace', href: '/marketplace', icon: 'marketplace' },
+      { name: 'Extensions', href: '/marketplace', icon: 'marketplace' },
       { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
       { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
     ]

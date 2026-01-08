@@ -48,7 +48,7 @@ export default function Login() {
             Maintainer Access
           </h1>
           <p className="text-gray-400">
-            Sign in with your Blue Robotics account to manage marketplace submissions.
+            Sign in with your Blue Robotics account to manage extension submissions.
           </p>
         </div>
 
@@ -110,10 +110,10 @@ export default function Login() {
         {/* Back link */}
         <div className="mt-6 text-center">
           <a
-            href="/marketplace"
+            href="/"
             className="text-sm text-gray-400 hover:text-ocean-400 transition-colors"
           >
-            ← Back to Marketplace
+            ← Back to Extensions
           </a>
         </div>
       </div>

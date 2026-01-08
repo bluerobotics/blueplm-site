@@ -23,7 +23,7 @@ export default function DeprecationWarning({
           </p>
           {replacementId && replacementName && (
             <Link 
-              to={`/marketplace/extensions/${replacementId}`}
+              to={`/extensions/${replacementId}`}
               className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-red-300 hover:text-red-200 transition-colors"
             >
               <span>See replacement: {replacementName}</span>

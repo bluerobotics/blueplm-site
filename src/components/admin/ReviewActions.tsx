@@ -29,7 +29,7 @@ const actionConfig: Record<ActionType, {
     icon: CheckCircle2,
     colors: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
     hoverColors: 'hover:bg-emerald-500/20 hover:border-emerald-500/50',
-    description: 'Approve this extension and publish it to the marketplace.',
+    description: 'Approve this extension and publish it.',
     requiresNotes: false,
   },
   reject: {

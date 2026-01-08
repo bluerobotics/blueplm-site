@@ -1,7 +1,7 @@
 -- ============================================================================
 -- BluePLM Extension Store Database Schema
 -- ============================================================================
--- This is a SEPARATE Supabase project for marketplace.blueplm.io
+-- This is a SEPARATE Supabase project for extensions.blueplm.io
 -- Hosted by Blue Robotics, shared across all organizations
 --
 -- IDEMPOTENT: Safe to run multiple times

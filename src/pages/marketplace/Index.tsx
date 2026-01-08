@@ -60,7 +60,7 @@ export default function MarketplaceIndex() {
         setFeatured(featuredRes)
         setCategories(categoriesRes)
       } catch (err) {
-        console.error('Failed to load marketplace data:', err)
+        console.error('Failed to load extensions data:', err)
         setError(err instanceof Error ? err.message : 'Failed to load extensions')
       } finally {
         setLoading(false)
@@ -152,7 +152,7 @@ export default function MarketplaceIndex() {
     return (
       <div className="py-16 flex flex-col items-center justify-center">
         <Loader2 className="w-10 h-10 text-ocean-400 animate-spin mb-4" />
-        <p className="text-gray-400">Loading marketplace...</p>
+        <p className="text-gray-400">Loading extensions...</p>
       </div>
     )
   }
@@ -162,7 +162,7 @@ export default function MarketplaceIndex() {
     return (
       <div className="py-16 text-center">
         <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-white mb-2">Failed to Load Marketplace</h1>
+        <h1 className="text-2xl font-bold text-white mb-2">Failed to Load Extensions</h1>
         <p className="text-gray-400 mb-6">{error}</p>
         <button
           onClick={() => window.location.reload()}
@@ -294,7 +294,7 @@ export default function MarketplaceIndex() {
             <p className="text-sm text-gray-400">Submit it to the marketplace</p>
           </div>
           <Link
-            to="/marketplace/submit"
+            to="/submit"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-all"
           >
             Submit Extension

@@ -72,7 +72,7 @@ export default function Submission() {
 
     const result = await approveSubmission(token, id, { notes });
     setSubmission(result.submission);
-    setActionSuccess('Submission approved! Extension has been published to the marketplace.');
+    setActionSuccess('Submission approved! Extension has been published.');
   };
 
   const handleReject = async (notes: string) => {
@@ -247,10 +247,10 @@ export default function Submission() {
                 Published Extension
               </h2>
               <Link
-                to={`/marketplace/extensions/${submission.extension_id}`}
+                to={`/extensions/${submission.extension_id}`}
                 className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
               >
-                View in Marketplace
+                View Extension
                 <ExternalLink className="w-4 h-4" />
               </Link>
             </section>

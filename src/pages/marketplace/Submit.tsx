@@ -49,7 +49,7 @@ const steps = [
   {
     number: 4,
     title: 'Go Live',
-    description: 'Once approved, your extension is published to the marketplace!',
+    description: 'Once approved, your extension is published!',
   },
 ]
 
@@ -104,10 +104,10 @@ export default function Submit() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              to="/marketplace"
+              to="/"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold bg-gradient-to-r from-ocean-500 to-brand-600 text-white hover:from-ocean-400 hover:to-brand-500 transition-all duration-300"
             >
-              Browse Marketplace
+              Browse Extensions
               <ArrowRight className="w-4 h-4" />
             </Link>
             <button

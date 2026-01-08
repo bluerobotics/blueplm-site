@@ -119,7 +119,7 @@ export default function AdminLayout() {
             </div>
             <div>
               <h1 className="font-display font-bold text-white text-lg">Admin</h1>
-              <p className="text-xs text-gray-500">BluePLM Marketplace</p>
+              <p className="text-xs text-gray-500">BluePLM Extensions</p>
             </div>
           </Link>
           {/* Mobile close button */}
@@ -161,14 +161,14 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        {/* Back to Marketplace */}
+        {/* Back to Extensions */}
         <div className="p-3 border-t border-white/10">
           <Link
-            to="/marketplace"
+            to="/"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all"
           >
             <Package className="w-5 h-5" />
-            <span>Back to Marketplace</span>
+            <span>Back to Extensions</span>
           </Link>
         </div>
 

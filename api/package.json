@@ -1,7 +1,7 @@
 {
   "name": "@blueplm/store-api",
   "version": "1.0.0",
-  "description": "BluePLM Extension Store API for marketplace.blueplm.io",
+  "description": "BluePLM Extension Store API for extensions.blueplm.io",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",

@@ -142,7 +142,7 @@ export default function Dashboard() {
           Dashboard
         </h1>
         <p className="text-gray-400">
-          Overview of marketplace submissions and activity.
+          Overview of extension submissions and activity.
         </p>
       </div>
 

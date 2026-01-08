@@ -61,7 +61,7 @@ export default function ExtensionCard({
 
   return (
     <Link
-      to={`/marketplace/extensions/${extension.id}`}
+      to={`/extensions/${extension.id}`}
       className={`group relative block rounded-xl transition-all duration-300 ${
         extension.deprecated 
           ? 'opacity-60 hover:opacity-80' 
@@ -125,7 +125,7 @@ export default function ExtensionCard({
           {/* Meta info */}
           <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
             <Link 
-              to={`/marketplace/publishers/${extension.publisher.id}`}
+              to={`/publishers/${extension.publisher.id}`}
               onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-1 hover:text-ocean-400 transition-colors"
             >

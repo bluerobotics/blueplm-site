@@ -96,11 +96,11 @@ export default function Extension() {
             : error || 'Something went wrong. Please try again.'}
         </p>
         <Link
-          to="/marketplace"
+          to="/"
           className="inline-flex items-center gap-2 text-ocean-400 hover:text-ocean-300"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Marketplace
+          Back to Extensions
         </Link>
       </div>
     )
@@ -115,12 +115,12 @@ export default function Extension() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-          <Link to="/marketplace" className="hover:text-white transition-colors">
-            Marketplace
+          <Link to="/" className="hover:text-white transition-colors">
+            Extensions
           </Link>
           <ChevronRight className="w-4 h-4" />
           <Link 
-            to={`/marketplace?category=${encodeURIComponent(extension.categories[0] || '')}`}
+            to={`/?category=${encodeURIComponent(extension.categories[0] || '')}`}
             className="hover:text-white transition-colors"
           >
             {extension.categories[0] || 'Extensions'}
@@ -179,7 +179,7 @@ export default function Extension() {
 
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
                   <Link 
-                    to={`/marketplace/publishers/${extension.publisher.slug}`}
+                    to={`/publishers/${extension.publisher.slug}`}
                     className="flex items-center gap-2 hover:text-ocean-400 transition-colors"
                   >
                     {extension.publisher.logo_url ? (
@@ -263,7 +263,7 @@ export default function Extension() {
                 )}
                 {extension.publisher.slug && (
                   <Link
-                    to={`/marketplace/publishers/${extension.publisher.slug}`}
+                    to={`/publishers/${extension.publisher.slug}`}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
                   >
                     <Globe className="w-4 h-4" />
@@ -389,7 +389,7 @@ export default function Extension() {
                   {extension.categories.map((cat) => (
                     <Link
                       key={cat}
-                      to={`/marketplace?category=${encodeURIComponent(cat)}`}
+                      to={`/?category=${encodeURIComponent(cat)}`}
                       className="px-2.5 py-1 text-xs font-medium rounded-full bg-ocean-500/20 text-ocean-400 border border-ocean-500/30 hover:bg-ocean-500/30 transition-colors"
                     >
                       {cat}

@@ -120,11 +120,11 @@ export default function Publisher() {
           {error || "The publisher you're looking for doesn't exist."}
         </p>
         <Link
-          to="/marketplace"
+          to="/"
           className="inline-flex items-center gap-2 text-ocean-400 hover:text-ocean-300"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Marketplace
+          Back to Extensions
         </Link>
       </div>
     )
@@ -135,8 +135,8 @@ export default function Publisher() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-          <Link to="/marketplace" className="hover:text-white transition-colors">
-            Marketplace
+          <Link to="/" className="hover:text-white transition-colors">
+            Extensions
           </Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-white">{publisher.name}</span>
