@@ -1,14 +1,25 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store } from 'lucide-react'
+import { Menu, X, Github, ExternalLink, MessageCircle, BookOpen, Store, Shield } from 'lucide-react'
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Downloads', href: '/downloads' },
-  { name: 'Marketplace', href: 'https://marketplace.blueplm.io/', external: true, icon: 'marketplace' },
-  { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
-  { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
-]
+// Check if we're on the marketplace subdomain
+const isMarketplaceSubdomain = window.location.hostname.startsWith('marketplace.')
+
+// Navigation changes based on subdomain
+const navigation = isMarketplaceSubdomain
+  ? [
+      { name: 'Extensions', href: '/' },
+      { name: 'Submit', href: '/submit' },
+      { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
+      { name: 'Admin', href: '/admin', icon: 'admin' },
+    ]
+  : [
+      { name: 'Home', href: '/' },
+      { name: 'Downloads', href: '/downloads' },
+      { name: 'Marketplace', href: '/marketplace', icon: 'marketplace' },
+      { name: 'Docs', href: 'https://docs.blueplm.io/', external: true, icon: 'docs' },
+      { name: 'Forum', href: 'https://discuss.bluerobotics.com/', external: true, icon: 'forum' },
+    ]
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -45,7 +56,7 @@ export default function Header() {
               )
               
               if (item.external) {
-                const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'marketplace' ? Store : MessageCircle
+                const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : BookOpen
                 return (
                   <a
                     key={item.name}
@@ -60,16 +71,25 @@ export default function Header() {
                 )
               }
               
+              // Get icon for internal links with icons
+              const getIcon = () => {
+                if (item.icon === 'marketplace') return <Store className="w-4 h-4" />
+                if (item.icon === 'admin') return <Shield className="w-4 h-4" />
+                return null
+              }
+              const icon = getIcon()
+              
               return (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
                     ${isActive 
                       ? 'text-white bg-white/10' 
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }`}
                 >
+                  {icon}
                   {item.name}
                 </Link>
               )
@@ -117,7 +137,7 @@ export default function Header() {
                 )
                 
                 if (item.external) {
-                  const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'marketplace' ? Store : MessageCircle
+                  const Icon = item.icon === 'docs' ? BookOpen : item.icon === 'forum' ? MessageCircle : BookOpen
                   return (
                     <a
                       key={item.name}
@@ -133,17 +153,26 @@ export default function Header() {
                   )
                 }
                 
+                // Get icon for internal links with icons
+                const getIcon = () => {
+                  if (item.icon === 'marketplace') return <Store className="w-4 h-4" />
+                  if (item.icon === 'admin') return <Shield className="w-4 h-4" />
+                  return null
+                }
+                const icon = getIcon()
+                
                 return (
                   <Link
                     key={item.name}
                     to={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                    className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                       ${isActive 
                         ? 'text-white bg-white/10' 
                         : 'text-gray-400 hover:text-white hover:bg-white/5'
                       }`}
                   >
+                    {icon}
                     {item.name}
                   </Link>
                 )
