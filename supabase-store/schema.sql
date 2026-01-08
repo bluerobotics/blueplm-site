@@ -810,3 +810,338 @@ VALUES (1, 'Initial extension store schema')
 ON CONFLICT (version) DO NOTHING;
 
 COMMENT ON TABLE schema_version IS 'Tracks database schema version';
+
+-- ============================================================================
+-- EXTENSION SUBMISSIONS
+-- ============================================================================
+-- Tracks extension submissions through the approval workflow.
+-- Users submit extensions publicly, admins (Blue Robotics) review and approve.
+
+CREATE TABLE IF NOT EXISTS extension_submissions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    
+    -- Submitter info
+    submitter_email TEXT NOT NULL,
+    submitter_name TEXT,
+    
+    -- Extension metadata
+    repository_url TEXT NOT NULL,
+    name TEXT NOT NULL CHECK (name ~ '^[a-z0-9]([a-z0-9-]*[a-z0-9])?$'),
+    display_name TEXT NOT NULL,
+    description TEXT,
+    category TEXT DEFAULT 'sandboxed' CHECK (category IN ('sandboxed', 'native')),
+    
+    -- Optional: Publisher to associate with (if existing)
+    publisher_id UUID REFERENCES publishers(id) ON DELETE SET NULL,
+    
+    -- Review workflow
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'needs_changes')),
+    reviewer_email TEXT,
+    reviewer_notes TEXT,
+    reviewed_at TIMESTAMPTZ,
+    
+    -- Resulting extension (set after approval)
+    extension_id UUID REFERENCES extensions(id) ON DELETE SET NULL,
+    
+    -- Timestamps
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for common queries
+CREATE INDEX IF NOT EXISTS idx_submissions_status ON extension_submissions(status);
+CREATE INDEX IF NOT EXISTS idx_submissions_created_at ON extension_submissions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_submissions_submitter ON extension_submissions(submitter_email);
+CREATE INDEX IF NOT EXISTS idx_submissions_reviewer ON extension_submissions(reviewer_email);
+CREATE INDEX IF NOT EXISTS idx_submissions_pending ON extension_submissions(status) WHERE status = 'pending';
+
+COMMENT ON TABLE extension_submissions IS 'Extension submission workflow for marketplace approval';
+COMMENT ON COLUMN extension_submissions.status IS 'pending: awaiting review, approved: published, rejected: denied, needs_changes: returned to submitter';
+COMMENT ON COLUMN extension_submissions.reviewer_notes IS 'Feedback from reviewer for rejection or requested changes';
+COMMENT ON COLUMN extension_submissions.extension_id IS 'The created extension after approval';
+
+-- Trigger for updated_at
+DROP TRIGGER IF EXISTS tr_submissions_updated_at ON extension_submissions;
+CREATE TRIGGER tr_submissions_updated_at
+    BEFORE UPDATE ON extension_submissions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ============================================================================
+-- EXTENSION SUBMISSIONS RLS
+-- ============================================================================
+
+ALTER TABLE extension_submissions ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can submit extensions (rate-limited in API)
+DROP POLICY IF EXISTS "Anyone can submit extensions" ON extension_submissions;
+CREATE POLICY "Anyone can submit extensions"
+    ON extension_submissions FOR INSERT
+    WITH CHECK (true);
+
+-- Submitters can view their own submissions
+DROP POLICY IF EXISTS "Submitters can view own submissions" ON extension_submissions;
+CREATE POLICY "Submitters can view own submissions"
+    ON extension_submissions FOR SELECT
+    USING (submitter_email = auth.jwt() ->> 'email');
+
+-- Admins (@bluerobotics.com) can view all submissions
+DROP POLICY IF EXISTS "Admins can view all submissions" ON extension_submissions;
+CREATE POLICY "Admins can view all submissions"
+    ON extension_submissions FOR SELECT
+    USING (
+        (auth.jwt() ->> 'email') LIKE '%@bluerobotics.com'
+    );
+
+-- Admins (@bluerobotics.com) can update submissions (approve/reject)
+DROP POLICY IF EXISTS "Admins can update submissions" ON extension_submissions;
+CREATE POLICY "Admins can update submissions"
+    ON extension_submissions FOR UPDATE
+    USING (
+        (auth.jwt() ->> 'email') LIKE '%@bluerobotics.com'
+    );
+
+-- ============================================================================
+-- SUBMISSION HELPER FUNCTIONS
+-- ============================================================================
+
+-- Approve a submission and create the extension atomically
+-- Returns the created extension ID
+CREATE OR REPLACE FUNCTION approve_submission(
+    p_submission_id UUID,
+    p_reviewer_email TEXT,
+    p_reviewer_notes TEXT DEFAULT NULL,
+    p_publisher_id UUID DEFAULT NULL  -- Can specify publisher or create new
+)
+RETURNS UUID AS $$
+DECLARE
+    v_submission extension_submissions%ROWTYPE;
+    v_publisher_id UUID;
+    v_extension_id UUID;
+BEGIN
+    -- Lock and get submission
+    SELECT * INTO v_submission
+    FROM extension_submissions
+    WHERE id = p_submission_id
+    FOR UPDATE;
+    
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Submission not found: %', p_submission_id;
+    END IF;
+    
+    IF v_submission.status != 'pending' AND v_submission.status != 'needs_changes' THEN
+        RAISE EXCEPTION 'Submission cannot be approved from status: %', v_submission.status;
+    END IF;
+    
+    -- Determine publisher
+    v_publisher_id := COALESCE(p_publisher_id, v_submission.publisher_id);
+    
+    IF v_publisher_id IS NULL THEN
+        -- Create new publisher from submitter info
+        INSERT INTO publishers (
+            name,
+            slug,
+            owner_email,
+            description
+        ) VALUES (
+            COALESCE(v_submission.submitter_name, split_part(v_submission.submitter_email, '@', 1)),
+            lower(regexp_replace(COALESCE(v_submission.submitter_name, split_part(v_submission.submitter_email, '@', 1)), '[^a-z0-9]+', '-', 'g')),
+            v_submission.submitter_email,
+            'Extension publisher'
+        )
+        RETURNING id INTO v_publisher_id;
+    END IF;
+    
+    -- Create the extension
+    INSERT INTO extensions (
+        publisher_id,
+        name,
+        display_name,
+        description,
+        repository_url,
+        category,
+        license,
+        published
+    ) VALUES (
+        v_publisher_id,
+        v_submission.name,
+        v_submission.display_name,
+        v_submission.description,
+        v_submission.repository_url,
+        v_submission.category,
+        'MIT',  -- Default license, can be updated later
+        FALSE   -- Not published until first version is added
+    )
+    RETURNING id INTO v_extension_id;
+    
+    -- Update submission as approved
+    UPDATE extension_submissions
+    SET status = 'approved',
+        reviewer_email = p_reviewer_email,
+        reviewer_notes = p_reviewer_notes,
+        reviewed_at = NOW(),
+        publisher_id = v_publisher_id,
+        extension_id = v_extension_id,
+        updated_at = NOW()
+    WHERE id = p_submission_id;
+    
+    RETURN v_extension_id;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION approve_submission IS 'Atomically approve a submission and create the extension';
+
+-- Reject a submission with feedback
+CREATE OR REPLACE FUNCTION reject_submission(
+    p_submission_id UUID,
+    p_reviewer_email TEXT,
+    p_reviewer_notes TEXT
+)
+RETURNS VOID AS $$
+DECLARE
+    v_submission extension_submissions%ROWTYPE;
+BEGIN
+    -- Lock and get submission
+    SELECT * INTO v_submission
+    FROM extension_submissions
+    WHERE id = p_submission_id
+    FOR UPDATE;
+    
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Submission not found: %', p_submission_id;
+    END IF;
+    
+    IF v_submission.status NOT IN ('pending', 'needs_changes') THEN
+        RAISE EXCEPTION 'Submission cannot be rejected from status: %', v_submission.status;
+    END IF;
+    
+    IF p_reviewer_notes IS NULL OR length(trim(p_reviewer_notes)) = 0 THEN
+        RAISE EXCEPTION 'Reviewer notes are required when rejecting a submission';
+    END IF;
+    
+    UPDATE extension_submissions
+    SET status = 'rejected',
+        reviewer_email = p_reviewer_email,
+        reviewer_notes = p_reviewer_notes,
+        reviewed_at = NOW(),
+        updated_at = NOW()
+    WHERE id = p_submission_id;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION reject_submission IS 'Reject a submission with required feedback';
+
+-- Request changes on a submission
+CREATE OR REPLACE FUNCTION request_changes_submission(
+    p_submission_id UUID,
+    p_reviewer_email TEXT,
+    p_reviewer_notes TEXT
+)
+RETURNS VOID AS $$
+DECLARE
+    v_submission extension_submissions%ROWTYPE;
+BEGIN
+    -- Lock and get submission
+    SELECT * INTO v_submission
+    FROM extension_submissions
+    WHERE id = p_submission_id
+    FOR UPDATE;
+    
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Submission not found: %', p_submission_id;
+    END IF;
+    
+    IF v_submission.status != 'pending' THEN
+        RAISE EXCEPTION 'Changes can only be requested on pending submissions, current status: %', v_submission.status;
+    END IF;
+    
+    IF p_reviewer_notes IS NULL OR length(trim(p_reviewer_notes)) = 0 THEN
+        RAISE EXCEPTION 'Reviewer notes are required when requesting changes';
+    END IF;
+    
+    UPDATE extension_submissions
+    SET status = 'needs_changes',
+        reviewer_email = p_reviewer_email,
+        reviewer_notes = p_reviewer_notes,
+        reviewed_at = NOW(),
+        updated_at = NOW()
+    WHERE id = p_submission_id;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION request_changes_submission IS 'Request changes on a submission with required feedback';
+
+-- Get pending submission count (for dashboard badge)
+CREATE OR REPLACE FUNCTION get_pending_submission_count()
+RETURNS BIGINT AS $$
+    SELECT COUNT(*) FROM extension_submissions WHERE status = 'pending';
+$$ LANGUAGE SQL STABLE;
+
+COMMENT ON FUNCTION get_pending_submission_count IS 'Get count of pending submissions for admin dashboard';
+
+-- List submissions with filters (for admin dashboard)
+CREATE OR REPLACE FUNCTION list_submissions(
+    p_status TEXT DEFAULT NULL,
+    p_search TEXT DEFAULT NULL,
+    p_page_size INTEGER DEFAULT 20,
+    p_page_offset INTEGER DEFAULT 0
+)
+RETURNS TABLE (
+    id UUID,
+    submitter_email TEXT,
+    submitter_name TEXT,
+    repository_url TEXT,
+    name TEXT,
+    display_name TEXT,
+    description TEXT,
+    category TEXT,
+    status TEXT,
+    reviewer_email TEXT,
+    reviewer_notes TEXT,
+    reviewed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.id,
+        s.submitter_email,
+        s.submitter_name,
+        s.repository_url,
+        s.name,
+        s.display_name,
+        s.description,
+        s.category,
+        s.status,
+        s.reviewer_email,
+        s.reviewer_notes,
+        s.reviewed_at,
+        s.created_at,
+        s.updated_at
+    FROM extension_submissions s
+    WHERE (p_status IS NULL OR s.status = p_status)
+      AND (p_search IS NULL OR 
+           s.display_name ILIKE '%' || p_search || '%' OR
+           s.name ILIKE '%' || p_search || '%' OR
+           s.submitter_email ILIKE '%' || p_search || '%')
+    ORDER BY 
+        CASE s.status 
+            WHEN 'pending' THEN 0 
+            WHEN 'needs_changes' THEN 1 
+            ELSE 2 
+        END,
+        s.created_at DESC
+    LIMIT p_page_size
+    OFFSET p_page_offset;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+COMMENT ON FUNCTION list_submissions IS 'List submissions with optional status filter and search';
+
+-- ============================================================================
+-- SCHEMA VERSION 2
+-- ============================================================================
+
+INSERT INTO schema_version (version, description)
+VALUES (2, 'Extension submissions workflow for marketplace approval')
+ON CONFLICT (version) DO NOTHING;

@@ -198,3 +198,52 @@ export interface AuthToken {
   exp: number;
   iat: number;
 }
+
+/**
+ * Authenticated admin user (Blue Robotics team member)
+ */
+export interface AdminUser {
+  email: string;
+  isAdmin: true;
+}
+
+/**
+ * Google OAuth user info returned from Supabase auth
+ */
+export interface GoogleUser {
+  id: string;
+  email: string;
+  email_verified: boolean;
+  full_name?: string;
+  avatar_url?: string;
+  provider: 'google';
+}
+
+// ============================================================================
+// Extension Submission types
+// ============================================================================
+
+export type SubmissionStatus = 'pending' | 'approved' | 'rejected' | 'needs_changes';
+
+export interface ExtensionSubmission {
+  id: string;
+  submitter_email: string;
+  submitter_name: string | null;
+  repository_url: string;
+  name: string;
+  display_name: string;
+  description: string | null;
+  category: 'sandboxed' | 'native';
+  publisher_id: string | null;
+  status: SubmissionStatus;
+  reviewer_email: string | null;
+  reviewer_notes: string | null;
+  reviewed_at: string | null;
+  extension_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SubmissionListItem extends ExtensionSubmission {
+  // Extended with any joined data if needed
+}
