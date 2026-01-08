@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Sparkles, TrendingUp, Clock, Package, 
-  ArrowRight, Zap, Shield, Puzzle, Loader2, AlertCircle
+  ArrowRight, Loader2, AlertCircle
 } from 'lucide-react'
 import ExtensionCard, { ExtensionCardData } from '../../components/marketplace/ExtensionCard'
 import SearchFilters, { FilterState } from '../../components/marketplace/SearchFilters'
@@ -27,27 +27,6 @@ function toCardData(ext: ExtensionListItem): ExtensionCardData {
     updatedAt: ext.created_at,
   }
 }
-
-const featuredCategories = [
-  { 
-    icon: Zap, 
-    name: 'CAD', 
-    description: 'Connect your CAD tools',
-    color: 'from-red-500/20 to-orange-500/20 border-orange-500/30'
-  },
-  { 
-    icon: Puzzle, 
-    name: 'ERP', 
-    description: 'Sync with your ERP',
-    color: 'from-purple-500/20 to-pink-500/20 border-purple-500/30'
-  },
-  { 
-    icon: Shield, 
-    name: 'Sync', 
-    description: 'Keep files in sync',
-    color: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/30'
-  },
-]
 
 export default function MarketplaceIndex() {
   const [filters, setFilters] = useState<FilterState>({
@@ -198,23 +177,18 @@ export default function MarketplaceIndex() {
   return (
     <div className="py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/30 text-sm mb-6">
-            <Package className="w-4 h-4 text-purple-400" />
-            <span className="text-purple-300">BluePLM Extension Marketplace</span>
-          </div>
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Extend Your PLM
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+            Extensions
           </h1>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Discover powerful extensions to integrate with your tools, automate workflows, 
-            and supercharge your product lifecycle management.
+          <p className="text-gray-400">
+            {extensions.length} extensions available
           </p>
         </div>
 
         {/* Search & Filters */}
-        <div className="mb-10">
+        <div className="mb-8">
           <SearchFilters 
             filters={filters}
             onFilterChange={setFilters}
@@ -245,30 +219,6 @@ export default function MarketplaceIndex() {
         ) : (
           /* Default Browse View */
           <>
-            {/* Category Quick Links */}
-            <section className="mb-12">
-              <div className="grid gap-4 sm:grid-cols-3">
-                {featuredCategories.map((cat) => (
-                  <button
-                    key={cat.name}
-                    onClick={() => setFilters({ ...filters, category: cat.name })}
-                    className={`group p-4 rounded-xl bg-gradient-to-br ${cat.color} border hover:scale-[1.02] transition-all duration-300`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                        <cat.icon className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="text-left">
-                        <h3 className="font-semibold text-white">{cat.name}</h3>
-                        <p className="text-sm text-gray-400">{cat.description}</p>
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all ml-auto" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </section>
-
             {/* Featured Extensions */}
             {featured.length > 0 && (
               <section className="mb-12">
@@ -338,19 +288,16 @@ export default function MarketplaceIndex() {
         )}
 
         {/* Submit CTA */}
-        <section className="mt-16 p-8 rounded-2xl bg-gradient-to-br from-purple-500/10 to-ocean-500/10 border border-purple-500/30 text-center">
-          <h3 className="font-display text-2xl font-bold text-white mb-3">
-            Build Something Amazing?
-          </h3>
-          <p className="text-gray-400 mb-6 max-w-md mx-auto">
-            Share your extension with the BluePLM community. Get verified and reach thousands of users.
-          </p>
+        <section className="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="font-semibold text-white">Have an extension to share?</h3>
+            <p className="text-sm text-gray-400">Submit it to the marketplace</p>
+          </div>
           <Link
             to="/marketplace/submit"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold bg-gradient-to-r from-purple-500 to-ocean-500 text-white hover:from-purple-400 hover:to-ocean-400 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-all"
           >
-            <Package className="w-5 h-5" />
-            Submit Your Extension
+            Submit Extension
             <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
