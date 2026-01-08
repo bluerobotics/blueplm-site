@@ -71,6 +71,16 @@ storeSubmissions.post('/', async (c) => {
     throw badRequest('An extension with this name is already pending review');
   }
 
+  // Extract repo name from URL as fallback for name/display_name
+  let repoName = 'extension';
+  try {
+    const urlParts = new URL(parsed.data.repository_url).pathname.split('/');
+    repoName = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2] || 'extension';
+    repoName = repoName.replace(/\.git$/, '');
+  } catch {
+    // Keep default
+  }
+
   // Create submission
   const { data: submission, error } = await supabaseAdmin
     .from('extension_submissions')
@@ -78,8 +88,8 @@ storeSubmissions.post('/', async (c) => {
       submitter_email: parsed.data.submitter_email,
       submitter_name: parsed.data.submitter_name || null,
       repository_url: parsed.data.repository_url,
-      name: parsed.data.name,
-      display_name: parsed.data.display_name,
+      name: parsed.data.name || repoName.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+      display_name: parsed.data.display_name || repoName,
       description: parsed.data.description || null,
       category: parsed.data.category,
       status: 'pending',

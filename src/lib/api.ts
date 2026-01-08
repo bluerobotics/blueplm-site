@@ -279,29 +279,22 @@ export async function fetchPublisher(id: string): Promise<Publisher & { extensio
 }
 
 /**
- * Submit extension for review (requires authentication)
+ * Submit extension for review (public - no auth required)
  */
 export async function submitExtension(data: {
   repositoryUrl: string;
   email: string;
 }): Promise<{ id: string }> {
-  // For now, this is a simplified submission that just records interest
-  // Full submission requires authentication and publisher account
-  const response = await fetch(`${API_BASE}/store/extensions`, {
+  const response = await fetch(`${API_BASE}/store/submissions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       repository_url: data.repositoryUrl,
-      contact_email: data.email,
+      submitter_email: data.email,
     }),
   });
-  
-  // If unauthorized, that's expected - user needs to authenticate first
-  if (response.status === 401) {
-    throw new ApiError('Authentication required. Please sign in to submit extensions.', 401);
-  }
   
   const result = await handleResponse<ApiResponse<{ id: string }>>(response);
   return result.data;

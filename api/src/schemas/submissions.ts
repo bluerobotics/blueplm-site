@@ -25,14 +25,16 @@ export type SubmissionStatusType = z.infer<typeof submissionStatusSchema>;
 
 /** Submit a new extension for review */
 export const createSubmissionSchema = z.object({
-  // Submitter info
+  // Submitter info (required)
   submitter_email: z.string().email('Valid email required'),
   submitter_name: z.string().min(1).max(100).optional(),
 
-  // Extension metadata
+  // Repository URL (required) - we'll fetch extension details from here
   repository_url: z.string().url('Valid repository URL required'),
-  name: slugSchema.min(2).max(50),
-  display_name: z.string().min(2).max(100),
+  
+  // Extension metadata (optional - maintainers can fill in during review)
+  name: slugSchema.min(2).max(50).optional(),
+  display_name: z.string().min(2).max(100).optional(),
   description: z.string().max(500).optional(),
   category: z.enum(['sandboxed', 'native']).default('sandboxed'),
 });
