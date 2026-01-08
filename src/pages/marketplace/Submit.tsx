@@ -56,6 +56,7 @@ const steps = [
 export default function Submit() {
   const [submissionUrl, setSubmissionUrl] = useState('')
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -69,6 +70,7 @@ export default function Submit() {
       await submitExtension({
         repositoryUrl: submissionUrl,
         email: email,
+        name: name || undefined,
       })
       setSubmitted(true)
     } catch (err) {
@@ -110,6 +112,7 @@ export default function Submit() {
                 setSubmitted(false)
                 setSubmissionUrl('')
                 setEmail('')
+                setName('')
                 setError(null)
               }}
               className="text-ocean-400 hover:text-ocean-300 font-medium"
@@ -222,6 +225,24 @@ export default function Submit() {
                   />
                   <p className="mt-1.5 text-xs text-gray-500">
                     We'll notify you about the review status
+                  </p>
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Your Name or Organization
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Jane Doe or Acme Inc."
+                    disabled={submitting}
+                    className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-ocean-500/50 focus:ring-2 focus:ring-ocean-500/20 transition-all disabled:opacity-50"
+                  />
+                  <p className="mt-1.5 text-xs text-gray-500">
+                    This will be shown as the publisher name
                   </p>
                 </div>
 

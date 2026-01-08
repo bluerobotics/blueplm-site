@@ -284,6 +284,7 @@ export async function fetchPublisher(id: string): Promise<Publisher & { extensio
 export async function submitExtension(data: {
   repositoryUrl: string;
   email: string;
+  name?: string;
 }): Promise<{ id: string }> {
   const response = await fetch(`${API_BASE}/store/submissions`, {
     method: 'POST',
@@ -293,6 +294,7 @@ export async function submitExtension(data: {
     body: JSON.stringify({
       repository_url: data.repositoryUrl,
       submitter_email: data.email,
+      submitter_name: data.name || undefined,
     }),
   });
   

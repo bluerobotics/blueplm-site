@@ -969,7 +969,7 @@ BEGIN
         v_submission.repository_url,
         v_submission.category,
         'MIT',  -- Default license, can be updated later
-        FALSE   -- Not published until first version is added
+        TRUE    -- Published immediately on approval
     )
     RETURNING id INTO v_extension_id;
     

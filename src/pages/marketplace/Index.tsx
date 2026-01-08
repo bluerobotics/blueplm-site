@@ -1,12 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { 
-  Sparkles, TrendingUp, Clock, Package, 
-  ArrowRight, Loader2, AlertCircle, Shield
+  Package, ArrowRight, Loader2, AlertCircle, Shield
 } from 'lucide-react'
 import ExtensionCard, { ExtensionCardData } from '../../components/marketplace/ExtensionCard'
 import SearchFilters, { FilterState } from '../../components/marketplace/SearchFilters'
-import { fetchExtensions, fetchFeatured, fetchCategories, type ExtensionListItem, type Category } from '../../lib/api'
+import { fetchExtensions, fetchCategories, type ExtensionListItem, type Category } from '../../lib/api'
 
 // Transform API response to card data format
 function toCardData(ext: ExtensionListItem): ExtensionCardData {
@@ -33,12 +32,11 @@ export default function MarketplaceIndex() {
     search: '',
     category: '',
     verifiedOnly: false,
-    sortBy: 'popular'
+    sortBy: 'name' // Default to alphabetical
   })
 
   // API state
   const [extensions, setExtensions] = useState<ExtensionListItem[]>([])
-  const [featured, setFeatured] = useState<ExtensionListItem[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -50,14 +48,12 @@ export default function MarketplaceIndex() {
       setError(null)
       
       try {
-        const [extensionsRes, featuredRes, categoriesRes] = await Promise.all([
-          fetchExtensions({ limit: 50, sort: 'popular' }),
-          fetchFeatured(3),
+        const [extensionsRes, categoriesRes] = await Promise.all([
+          fetchExtensions({ limit: 100, sort: 'name' }),
           fetchCategories(),
         ])
         
         setExtensions(extensionsRes.data)
-        setFeatured(featuredRes)
         setCategories(categoriesRes)
       } catch (err) {
         console.error('Failed to load extensions data:', err)
@@ -137,14 +133,6 @@ export default function MarketplaceIndex() {
     return result
   }, [extensions, filters])
 
-  // Recently updated
-  const recentExtensions = useMemo(() => {
-    return [...extensions]
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .slice(0, 4)
-  }, [extensions])
-
-  const isFiltering = filters.search || filters.category || filters.verifiedOnly || filters.sortBy !== 'popular'
   const categoryNames = categories.map(c => c.name)
 
   // Loading state
@@ -206,95 +194,23 @@ export default function MarketplaceIndex() {
           />
         </div>
 
-        {/* Main Content */}
-        {isFiltering ? (
-          /* Filtered Results */
-          <section>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredExtensions.map((ext) => (
-                <ExtensionCard key={ext.id} extension={toCardData(ext)} />
-              ))}
+        {/* Extensions Grid */}
+        <section>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredExtensions.map((ext) => (
+              <ExtensionCard key={ext.id} extension={toCardData(ext)} />
+            ))}
+          </div>
+          {filteredExtensions.length === 0 && (
+            <div className="text-center py-16">
+              <Package className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2">No extensions found</h3>
+              <p className="text-gray-400">
+                {filters.search ? 'Try adjusting your search' : 'No extensions available yet'}
+              </p>
             </div>
-            {filteredExtensions.length === 0 && (
-              <div className="text-center py-16">
-                <Package className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No extensions found</h3>
-                <p className="text-gray-400">
-                  Try adjusting your search or filters
-                </p>
-              </div>
-            )}
-          </section>
-        ) : (
-          /* Default Browse View */
-          <>
-            {/* Featured Extensions */}
-            {featured.length > 0 && (
-              <section className="mb-12">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-yellow-400" />
-                    <h2 className="font-display text-xl font-semibold text-white">Featured</h2>
-                  </div>
-                  <button 
-                    onClick={() => setFilters({ ...filters, verifiedOnly: true })}
-                    className="text-sm text-ocean-400 hover:text-ocean-300 font-medium flex items-center gap-1"
-                  >
-                    View all verified
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {featured.map((ext) => (
-                    <ExtensionCard key={ext.id} extension={toCardData(ext)} variant="featured" />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Recently Updated */}
-            {recentExtensions.length > 0 && (
-              <section className="mb-12">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-ocean-400" />
-                    <h2 className="font-display text-xl font-semibold text-white">Recently Updated</h2>
-                  </div>
-                  <button 
-                    onClick={() => setFilters({ ...filters, sortBy: 'recent' })}
-                    className="text-sm text-ocean-400 hover:text-ocean-300 font-medium flex items-center gap-1"
-                  >
-                    See all
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {recentExtensions.map((ext) => (
-                    <ExtensionCard key={ext.id} extension={toCardData(ext)} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* All Extensions */}
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-400" />
-                  <h2 className="font-display text-xl font-semibold text-white">Popular Extensions</h2>
-                </div>
-                <span className="text-sm text-gray-400">
-                  {extensions.length} extensions available
-                </span>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {extensions.map((ext) => (
-                  <ExtensionCard key={ext.id} extension={toCardData(ext)} />
-                ))}
-              </div>
-            </section>
-          </>
-        )}
+          )}
+        </section>
 
         {/* Submit CTA */}
         <section className="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
