@@ -178,13 +178,22 @@ export default function MarketplaceIndex() {
     <div className="py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
-            Extensions
-          </h1>
-          <p className="text-gray-400">
-            {extensions.length} extensions available
-          </p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+              Extensions
+            </h1>
+            <p className="text-gray-400">
+              {extensions.length} extensions available
+            </p>
+          </div>
+          <Link
+            to="/admin"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+          >
+            <Shield className="w-4 h-4" />
+            Maintainer Login
+          </Link>
         </div>
 
         {/* Search & Filters */}
@@ -301,17 +310,6 @@ export default function MarketplaceIndex() {
             <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
-
-        {/* Maintainer Login */}
-        <div className="mt-8 text-center">
-          <Link
-            to="/admin"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-400 transition-colors"
-          >
-            <Shield className="w-4 h-4" />
-            Maintainer Login
-          </Link>
-        </div>
       </div>
     </div>
   )
