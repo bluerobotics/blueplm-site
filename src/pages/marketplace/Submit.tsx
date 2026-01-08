@@ -146,18 +146,15 @@ export default function Submit() {
             How It Works
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {steps.map((step, i) => (
+            {steps.map((step) => (
               <div 
                 key={step.number}
-                className="relative p-5 rounded-xl bg-white/5 border border-white/10"
+                className="p-5 rounded-xl bg-white/5 border border-white/10"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <span className="w-8 h-8 rounded-full bg-ocean-500/20 flex items-center justify-center text-sm font-bold text-ocean-400">
                     {step.number}
                   </span>
-                  {i < steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-gradient-to-r from-white/20 to-transparent -translate-x-4" />
-                  )}
                 </div>
                 <h3 className="font-semibold text-white mb-1">{step.title}</h3>
                 <p className="text-sm text-gray-400">{step.description}</p>
