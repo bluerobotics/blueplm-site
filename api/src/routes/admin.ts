@@ -499,7 +499,7 @@ admin.put('/reports/:id', async (c) => {
 });
 
 /**
- * DELETE /admin/extensions/:id - Remove extension (soft delete)
+ * DELETE /admin/extensions/:id - Remove extension (soft delete / unpublish)
  */
 admin.delete('/extensions/:id', async (c) => {
   const id = c.req.param('id');
@@ -520,6 +520,77 @@ admin.delete('/extensions/:id', async (c) => {
     {
       success: true,
       message: 'Extension unpublished successfully',
+    } as ApiResponse,
+    200,
+    noCacheHeaders()
+  );
+});
+
+/**
+ * DELETE /admin/extensions/:id/permanent - Permanently delete extension
+ * This removes the extension and all related data from the database.
+ * Only works on unpublished extensions as a safety measure.
+ */
+admin.delete('/extensions/:id/permanent', async (c) => {
+  const id = c.req.param('id');
+  const supabaseAdmin = c.get('supabaseAdmin');
+
+  // First check if extension exists and is unpublished
+  const { data: ext, error: fetchError } = await supabaseAdmin
+    .from('extensions')
+    .select('id, name, published')
+    .eq('id', id)
+    .single();
+
+  if (fetchError || !ext) {
+    throw notFound('Extension');
+  }
+
+  // Safety check: only allow permanent deletion of unpublished extensions
+  if (ext.published) {
+    throw badRequest('Cannot permanently delete a published extension. Unpublish it first.');
+  }
+
+  // Delete related data first (due to foreign key constraints)
+  // Delete extension versions
+  await supabaseAdmin
+    .from('extension_versions')
+    .delete()
+    .eq('extension_id', id);
+
+  // Delete extension installs
+  await supabaseAdmin
+    .from('extension_installs')
+    .delete()
+    .eq('extension_id', id);
+
+  // Delete extension reports
+  await supabaseAdmin
+    .from('extension_reports')
+    .delete()
+    .eq('extension_id', id);
+
+  // Delete extension deprecations
+  await supabaseAdmin
+    .from('extension_deprecations')
+    .delete()
+    .eq('extension_id', id);
+
+  // Finally delete the extension itself
+  const { error: deleteError } = await supabaseAdmin
+    .from('extensions')
+    .delete()
+    .eq('id', id);
+
+  if (deleteError) {
+    console.error('Permanent delete error:', deleteError);
+    throw badRequest('Failed to delete extension');
+  }
+
+  return c.json(
+    {
+      success: true,
+      message: `Extension "${ext.name}" permanently deleted`,
     } as ApiResponse,
     200,
     noCacheHeaders()

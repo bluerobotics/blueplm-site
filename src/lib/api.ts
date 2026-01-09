@@ -586,6 +586,22 @@ export async function restoreExtension(
 }
 
 /**
+ * Permanently delete an extension (admin only)
+ * Only works on unpublished extensions.
+ */
+export async function deleteExtensionPermanently(
+  accessToken: string,
+  id: string
+): Promise<void> {
+  const response = await fetch(`${API_BASE}/admin/extensions/${id}/permanent`, {
+    method: 'DELETE',
+    headers: getAdminHeaders(accessToken),
+  });
+  
+  await handleResponse<ApiResponse<void>>(response);
+}
+
+/**
  * Toggle extension verification status (admin only)
  */
 export async function setExtensionVerified(

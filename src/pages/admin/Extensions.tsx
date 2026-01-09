@@ -11,6 +11,7 @@ import {
   fetchAdminExtensions,
   unpublishExtension,
   restoreExtension,
+  deleteExtensionPermanently,
   setExtensionVerified,
   setExtensionFeatured,
   type AdminExtension,
@@ -30,6 +31,7 @@ function ExtensionCard({
   extension, 
   onUnpublish,
   onRestore,
+  onDeletePermanently,
   onToggleVerified,
   onToggleFeatured,
   isLoading,
@@ -37,6 +39,7 @@ function ExtensionCard({
   extension: AdminExtension;
   onUnpublish: (id: string) => void;
   onRestore: (id: string) => void;
+  onDeletePermanently: (id: string, name: string) => void;
   onToggleVerified: (id: string, verified: boolean) => void;
   onToggleFeatured: (id: string, featured: boolean) => void;
   isLoading: boolean;
@@ -183,22 +186,34 @@ function ExtensionCard({
                       onUnpublish(extension.id);
                       setMenuOpen(false);
                     }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <EyeOff className="w-4 h-4" />
                     Unpublish Extension
                   </button>
                 ) : (
-                  <button
-                    onClick={() => {
-                      onRestore(extension.id);
-                      setMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    Restore Extension
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        onRestore(extension.id);
+                        setMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Restore Extension
+                    </button>
+                    <button
+                      onClick={() => {
+                        onDeletePermanently(extension.id, extension.display_name);
+                        setMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete Permanently
+                    </button>
+                  </>
                 )}
               </div>
             </>
@@ -336,6 +351,31 @@ export default function Extensions() {
       loadExtensions();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to restore extension');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDeletePermanently = async (id: string, name: string) => {
+    // Confirm before permanent deletion
+    const confirmed = window.confirm(
+      `Are you sure you want to PERMANENTLY DELETE "${name}"?\n\n` +
+      `This will remove the extension and ALL related data (versions, installs, reports) from the database.\n\n` +
+      `This action CANNOT be undone!`
+    );
+    
+    if (!confirmed) return;
+
+    const token = await getAccessToken();
+    if (!token) return;
+
+    setActionLoading(id);
+    try {
+      await deleteExtensionPermanently(token, id);
+      setSuccessMessage(`Extension "${name}" permanently deleted`);
+      loadExtensions();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete extension');
     } finally {
       setActionLoading(null);
     }
@@ -483,6 +523,7 @@ export default function Extensions() {
                 extension={extension}
                 onUnpublish={handleUnpublish}
                 onRestore={handleRestore}
+                onDeletePermanently={handleDeletePermanently}
                 onToggleVerified={handleToggleVerified}
                 onToggleFeatured={handleToggleFeatured}
                 isLoading={actionLoading === extension.id}
