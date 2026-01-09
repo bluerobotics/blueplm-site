@@ -1145,3 +1145,486 @@ COMMENT ON FUNCTION list_submissions IS 'List submissions with optional status f
 INSERT INTO schema_version (version, description)
 VALUES (2, 'Extension submissions workflow for marketplace approval')
 ON CONFLICT (version) DO NOTHING;
+
+-- ============================================================================
+-- GITHUB RELEASES INTEGRATION (Schema Version 3)
+-- ============================================================================
+-- Adds support for:
+--   - Fetching extension metadata from GitHub releases
+--   - Computing SHA256 hashes for .bpx files
+--   - Tracking sync job state
+--   - Creating versions automatically on approval
+
+-- ============================================================================
+-- EXTENSION SUBMISSIONS - GitHub Release Columns
+-- ============================================================================
+-- These columns store data fetched from GitHub when a submission is created
+
+-- GitHub repository info
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS github_owner TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS github_repo TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS latest_release_tag TEXT;
+
+-- Fetched manifest data (from extension.json in release)
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_manifest JSONB;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_version TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_display_name TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_description TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_icon_url TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_categories TEXT[];
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_license TEXT;
+
+-- .bpx bundle info
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS bpx_download_url TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS bpx_hash TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS bpx_size INTEGER;
+
+-- Release notes (sanitized for XSS)
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS changelog TEXT;
+
+-- Fetch status
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetch_error TEXT;
+ALTER TABLE extension_submissions ADD COLUMN IF NOT EXISTS fetched_at TIMESTAMPTZ;
+
+COMMENT ON COLUMN extension_submissions.github_owner IS 'GitHub repository owner (e.g., "bluerobotics")';
+COMMENT ON COLUMN extension_submissions.github_repo IS 'GitHub repository name (e.g., "blueplm-ext-google-drive")';
+COMMENT ON COLUMN extension_submissions.latest_release_tag IS 'Git tag of the latest release (e.g., "v1.0.0")';
+COMMENT ON COLUMN extension_submissions.fetched_manifest IS 'Full extension.json contents from the release';
+COMMENT ON COLUMN extension_submissions.fetched_version IS 'Version from manifest (source of truth, not tag)';
+COMMENT ON COLUMN extension_submissions.bpx_hash IS 'SHA256 hash of .bpx file computed server-side';
+COMMENT ON COLUMN extension_submissions.changelog IS 'Sanitized release notes from GitHub release body';
+
+-- ============================================================================
+-- EXTENSIONS - Sync Tracking
+-- ============================================================================
+-- Track when extensions were last synced with GitHub
+
+ALTER TABLE extensions ADD COLUMN IF NOT EXISTS last_synced_at TIMESTAMPTZ;
+
+CREATE INDEX IF NOT EXISTS idx_extensions_last_synced ON extensions(last_synced_at);
+
+COMMENT ON COLUMN extensions.last_synced_at IS 'When releases were last fetched from GitHub';
+
+-- ============================================================================
+-- EXTENSION SYNC LOG
+-- ============================================================================
+-- Tracks sync job executions for debugging and monitoring
+
+CREATE TABLE IF NOT EXISTS extension_sync_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    extension_id UUID REFERENCES extensions(id) ON DELETE CASCADE,
+    
+    -- Timing
+    started_at TIMESTAMPTZ DEFAULT NOW(),
+    completed_at TIMESTAMPTZ,
+    
+    -- Results
+    releases_checked INTEGER DEFAULT 0,
+    versions_added INTEGER DEFAULT 0,
+    
+    -- Status
+    status TEXT NOT NULL DEFAULT 'running',
+    error_message TEXT,
+    
+    CONSTRAINT valid_sync_status CHECK (status IN ('running', 'success', 'error'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_sync_log_extension ON extension_sync_log(extension_id);
+CREATE INDEX IF NOT EXISTS idx_sync_log_status ON extension_sync_log(status);
+CREATE INDEX IF NOT EXISTS idx_sync_log_started ON extension_sync_log(started_at DESC);
+
+COMMENT ON TABLE extension_sync_log IS 'Tracks sync job executions for GitHub release polling';
+COMMENT ON COLUMN extension_sync_log.releases_checked IS 'Number of GitHub releases examined';
+COMMENT ON COLUMN extension_sync_log.versions_added IS 'Number of new versions added to database';
+
+-- RLS for sync log (read-only for admins, service role can write)
+ALTER TABLE extension_sync_log ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Admins can view sync log" ON extension_sync_log;
+CREATE POLICY "Admins can view sync log"
+    ON extension_sync_log FOR SELECT
+    USING (
+        (auth.jwt() ->> 'email') LIKE '%@bluerobotics.com'
+    );
+
+-- ============================================================================
+-- UPDATED APPROVE_SUBMISSION FUNCTION
+-- ============================================================================
+-- Now creates initial version from fetched GitHub release data
+
+CREATE OR REPLACE FUNCTION approve_submission(
+    p_submission_id UUID,
+    p_reviewer_email TEXT,
+    p_reviewer_notes TEXT DEFAULT NULL,
+    p_publisher_id UUID DEFAULT NULL  -- Can specify publisher or create new
+)
+RETURNS UUID AS $$
+DECLARE
+    v_submission extension_submissions%ROWTYPE;
+    v_publisher_id UUID;
+    v_extension_id UUID;
+    v_display_name TEXT;
+    v_description TEXT;
+    v_license TEXT;
+    v_categories TEXT[];
+BEGIN
+    -- Lock and get submission
+    SELECT * INTO v_submission
+    FROM extension_submissions
+    WHERE id = p_submission_id
+    FOR UPDATE;
+    
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Submission not found: %', p_submission_id;
+    END IF;
+    
+    IF v_submission.status != 'pending' AND v_submission.status != 'needs_changes' THEN
+        RAISE EXCEPTION 'Submission cannot be approved from status: %', v_submission.status;
+    END IF;
+    
+    -- Validate required GitHub release data
+    IF v_submission.bpx_hash IS NULL THEN
+        RAISE EXCEPTION 'Cannot approve submission without .bpx hash. Re-fetch release data.';
+    END IF;
+    
+    IF v_submission.fetched_version IS NULL THEN
+        RAISE EXCEPTION 'Cannot approve submission without version. Re-fetch release data.';
+    END IF;
+    
+    -- Use fetched data, falling back to submission data
+    v_display_name := COALESCE(v_submission.fetched_display_name, v_submission.display_name);
+    v_description := COALESCE(v_submission.fetched_description, v_submission.description);
+    v_license := COALESCE(v_submission.fetched_license, 'MIT');
+    v_categories := COALESCE(v_submission.fetched_categories, '{}');
+    
+    -- Determine publisher
+    v_publisher_id := COALESCE(p_publisher_id, v_submission.publisher_id);
+    
+    IF v_publisher_id IS NULL THEN
+        -- Create new publisher from submitter info
+        INSERT INTO publishers (
+            name,
+            slug,
+            owner_email,
+            description
+        ) VALUES (
+            COALESCE(v_submission.submitter_name, split_part(v_submission.submitter_email, '@', 1)),
+            lower(regexp_replace(COALESCE(v_submission.submitter_name, split_part(v_submission.submitter_email, '@', 1)), '[^a-z0-9]+', '-', 'g')),
+            v_submission.submitter_email,
+            'Extension publisher'
+        )
+        RETURNING id INTO v_publisher_id;
+    END IF;
+    
+    -- Create the extension with fetched metadata
+    INSERT INTO extensions (
+        publisher_id,
+        name,
+        display_name,
+        description,
+        repository_url,
+        category,
+        categories,
+        license,
+        icon_url,
+        published,
+        last_synced_at
+    ) VALUES (
+        v_publisher_id,
+        v_submission.name,
+        v_display_name,
+        v_description,
+        v_submission.repository_url,
+        v_submission.category,
+        v_categories,
+        v_license,
+        v_submission.fetched_icon_url,
+        TRUE,
+        NOW()
+    )
+    RETURNING id INTO v_extension_id;
+    
+    -- Create initial version from fetched release data
+    INSERT INTO extension_versions (
+        extension_id,
+        version,
+        manifest,
+        changelog,
+        bundle_url,
+        bundle_hash,
+        bundle_size,
+        prerelease,
+        published,
+        published_at
+    ) VALUES (
+        v_extension_id,
+        v_submission.fetched_version,
+        COALESCE(v_submission.fetched_manifest, '{}'::jsonb),
+        v_submission.changelog,
+        v_submission.bpx_download_url,
+        v_submission.bpx_hash,
+        v_submission.bpx_size,
+        FALSE,
+        TRUE,
+        NOW()
+    );
+    
+    -- Update submission as approved
+    UPDATE extension_submissions
+    SET status = 'approved',
+        reviewer_email = p_reviewer_email,
+        reviewer_notes = p_reviewer_notes,
+        reviewed_at = NOW(),
+        publisher_id = v_publisher_id,
+        extension_id = v_extension_id,
+        updated_at = NOW()
+    WHERE id = p_submission_id;
+    
+    RETURN v_extension_id;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION approve_submission IS 'Atomically approve a submission and create extension with initial version from GitHub release';
+
+-- ============================================================================
+-- ADD VERSION FROM SYNC JOB
+-- ============================================================================
+-- Used by sync job to add new versions discovered from GitHub releases
+
+CREATE OR REPLACE FUNCTION add_version_from_sync(
+    p_extension_id UUID,
+    p_version TEXT,
+    p_manifest JSONB,
+    p_changelog TEXT,
+    p_bundle_url TEXT,
+    p_bundle_hash TEXT,
+    p_bundle_size INTEGER,
+    p_prerelease BOOLEAN DEFAULT FALSE
+)
+RETURNS UUID AS $$
+DECLARE
+    v_version_id UUID;
+    v_existing_version UUID;
+BEGIN
+    -- Check if version already exists
+    SELECT id INTO v_existing_version
+    FROM extension_versions
+    WHERE extension_id = p_extension_id
+      AND version = p_version;
+    
+    IF v_existing_version IS NOT NULL THEN
+        -- Version already exists, return existing ID
+        RETURN v_existing_version;
+    END IF;
+    
+    -- Validate hash is provided
+    IF p_bundle_hash IS NULL OR length(p_bundle_hash) != 64 THEN
+        RAISE EXCEPTION 'Invalid or missing bundle_hash. Must be 64-character SHA256 hex string.';
+    END IF;
+    
+    -- Insert new version
+    INSERT INTO extension_versions (
+        extension_id,
+        version,
+        manifest,
+        changelog,
+        bundle_url,
+        bundle_hash,
+        bundle_size,
+        prerelease,
+        published,
+        published_at
+    ) VALUES (
+        p_extension_id,
+        p_version,
+        p_manifest,
+        p_changelog,
+        p_bundle_url,
+        p_bundle_hash,
+        p_bundle_size,
+        p_prerelease,
+        TRUE,
+        NOW()
+    )
+    RETURNING id INTO v_version_id;
+    
+    -- Update extension's last_synced_at
+    UPDATE extensions
+    SET last_synced_at = NOW(),
+        updated_at = NOW()
+    WHERE id = p_extension_id;
+    
+    RETURN v_version_id;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION add_version_from_sync IS 'Add a new version from GitHub sync job. Idempotent - returns existing version if already exists.';
+
+-- ============================================================================
+-- START SYNC JOB
+-- ============================================================================
+-- Creates a sync log entry when starting a sync
+
+CREATE OR REPLACE FUNCTION start_sync_job(p_extension_id UUID)
+RETURNS UUID AS $$
+DECLARE
+    v_sync_id UUID;
+BEGIN
+    INSERT INTO extension_sync_log (extension_id, status)
+    VALUES (p_extension_id, 'running')
+    RETURNING id INTO v_sync_id;
+    
+    RETURN v_sync_id;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION start_sync_job IS 'Create a sync log entry when starting a sync job';
+
+-- ============================================================================
+-- COMPLETE SYNC JOB
+-- ============================================================================
+-- Updates sync log entry when sync completes (success or error)
+
+CREATE OR REPLACE FUNCTION complete_sync_job(
+    p_sync_id UUID,
+    p_releases_checked INTEGER,
+    p_versions_added INTEGER,
+    p_error_message TEXT DEFAULT NULL
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE extension_sync_log
+    SET completed_at = NOW(),
+        releases_checked = p_releases_checked,
+        versions_added = p_versions_added,
+        status = CASE WHEN p_error_message IS NULL THEN 'success' ELSE 'error' END,
+        error_message = p_error_message
+    WHERE id = p_sync_id;
+    
+    -- Also update extension's last_synced_at if successful
+    IF p_error_message IS NULL THEN
+        UPDATE extensions
+        SET last_synced_at = NOW()
+        WHERE id = (SELECT extension_id FROM extension_sync_log WHERE id = p_sync_id);
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION complete_sync_job IS 'Update sync log entry when job completes';
+
+-- ============================================================================
+-- GET EXTENSION BY NAME
+-- ============================================================================
+-- Lookup extension by full name (publisher.name) for deep link support
+
+CREATE OR REPLACE FUNCTION get_extension_by_name(p_full_name TEXT)
+RETURNS TABLE (
+    id UUID,
+    publisher_id UUID,
+    publisher_slug TEXT,
+    name TEXT,
+    display_name TEXT,
+    description TEXT,
+    repository_url TEXT,
+    github_owner TEXT,
+    github_repo TEXT,
+    icon_url TEXT,
+    license TEXT,
+    category TEXT,
+    categories TEXT[],
+    verified BOOLEAN,
+    published BOOLEAN,
+    download_count INTEGER,
+    last_synced_at TIMESTAMPTZ
+) AS $$
+DECLARE
+    v_parts TEXT[];
+    v_publisher_slug TEXT;
+    v_extension_name TEXT;
+BEGIN
+    -- Parse "publisher.name" format
+    v_parts := string_to_array(p_full_name, '.');
+    
+    IF array_length(v_parts, 1) != 2 THEN
+        RAISE EXCEPTION 'Invalid extension name format. Expected "publisher.name", got: %', p_full_name;
+    END IF;
+    
+    v_publisher_slug := v_parts[1];
+    v_extension_name := v_parts[2];
+    
+    RETURN QUERY
+    SELECT 
+        e.id,
+        e.publisher_id,
+        p.slug,
+        e.name,
+        e.display_name,
+        e.description,
+        e.repository_url,
+        -- Parse github owner/repo from repository_url
+        (regexp_match(e.repository_url, 'github\.com/([^/]+)'))[1],
+        (regexp_match(e.repository_url, 'github\.com/[^/]+/([^/]+)'))[1],
+        e.icon_url,
+        e.license,
+        e.category,
+        e.categories,
+        e.verified,
+        e.published,
+        e.download_count,
+        e.last_synced_at
+    FROM extensions e
+    JOIN publishers p ON p.id = e.publisher_id
+    WHERE p.slug = v_publisher_slug
+      AND e.name = v_extension_name;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+COMMENT ON FUNCTION get_extension_by_name IS 'Get extension by full name (publisher.name) for deep link support';
+
+-- ============================================================================
+-- GET EXTENSIONS NEEDING SYNC
+-- ============================================================================
+-- Returns extensions that haven't been synced recently (for hourly cron job)
+
+CREATE OR REPLACE FUNCTION get_extensions_needing_sync(
+    p_max_age_hours INTEGER DEFAULT 1,
+    p_limit INTEGER DEFAULT 100
+)
+RETURNS TABLE (
+    id UUID,
+    name TEXT,
+    publisher_slug TEXT,
+    repository_url TEXT,
+    github_owner TEXT,
+    github_repo TEXT,
+    last_synced_at TIMESTAMPTZ
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        e.id,
+        e.name,
+        p.slug,
+        e.repository_url,
+        (regexp_match(e.repository_url, 'github\.com/([^/]+)'))[1],
+        (regexp_match(e.repository_url, 'github\.com/[^/]+/([^/]+)'))[1],
+        e.last_synced_at
+    FROM extensions e
+    JOIN publishers p ON p.id = e.publisher_id
+    WHERE e.published = TRUE
+      AND (e.last_synced_at IS NULL 
+           OR e.last_synced_at < NOW() - (p_max_age_hours || ' hours')::interval)
+    ORDER BY e.last_synced_at NULLS FIRST
+    LIMIT p_limit;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+COMMENT ON FUNCTION get_extensions_needing_sync IS 'Get extensions that need to be synced with GitHub';
+
+-- ============================================================================
+-- SCHEMA VERSION 3
+-- ============================================================================
+
+INSERT INTO schema_version (version, description)
+VALUES (3, 'GitHub Releases integration with hash verification')
+ON CONFLICT (version) DO NOTHING;

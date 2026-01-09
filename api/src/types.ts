@@ -13,6 +13,9 @@ export interface Env {
   // Admin authentication
   ADMIN_API_KEY: string;
 
+  // GitHub API (for extension sync)
+  GITHUB_API_TOKEN?: string;
+
   // Configuration
   ENVIRONMENT: 'development' | 'staging' | 'production';
   RATE_LIMIT_DOWNLOADS_PER_MINUTE: string;
@@ -246,4 +249,92 @@ export interface ExtensionSubmission {
 
 export interface SubmissionListItem extends ExtensionSubmission {
   // Extended with any joined data if needed
+}
+
+// ============================================================================
+// GitHub API types
+// ============================================================================
+
+/**
+ * GitHub Release from API
+ */
+export interface GitHubRelease {
+  tag_name: string;
+  name: string;
+  body: string;
+  prerelease: boolean;
+  draft: boolean;
+  published_at: string;
+  assets: GitHubAsset[];
+}
+
+/**
+ * GitHub Release Asset
+ */
+export interface GitHubAsset {
+  name: string;
+  browser_download_url: string;
+  size: number;
+}
+
+/**
+ * Extension manifest from extension.json
+ */
+export interface ExtensionManifest {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  icon?: string;
+  categories?: string[];
+  license?: string;
+  author?: string;
+  homepage?: string;
+  repository?: string;
+  bugs?: string;
+  engines?: {
+    blueplm?: string;
+  };
+  [key: string]: unknown;
+}
+
+/**
+ * Result of manifest validation
+ */
+export interface ManifestValidationResult {
+  valid: boolean;
+  errors: string[];
+}
+
+/**
+ * Result of downloading and hashing a .bpx file
+ */
+export interface BpxHashResult {
+  hash: string;
+  size: number;
+}
+
+/**
+ * Result of syncing a single extension
+ */
+export interface ExtensionSyncResult {
+  updated: boolean;
+  latestVersion: string;
+  newVersions: string[];
+  error?: string;
+}
+
+/**
+ * Result of bulk sync operation
+ */
+export interface BulkSyncResult {
+  totalExtensions: number;
+  synced: number;
+  failed: number;
+  newVersionsAdded: number;
+  errors: Array<{
+    extensionId: string;
+    extensionName: string;
+    error: string;
+  }>;
 }

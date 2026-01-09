@@ -303,6 +303,25 @@ export async function submitExtension(data: {
 }
 
 /**
+ * Sync extension with GitHub to check for updates
+ */
+export async function syncExtension(extensionName: string): Promise<{
+  updated: boolean;
+  latestVersion: string;
+  newVersions: string[];
+}> {
+  const response = await fetch(`${API_BASE}/store/extensions/${extensionName}/sync`, {
+    method: 'POST',
+  });
+  const result = await handleResponse<ApiResponse<{
+    updated: boolean;
+    latestVersion: string;
+    newVersions: string[];
+  }>>(response);
+  return result.data;
+}
+
+/**
  * Report an extension
  */
 export async function reportExtension(

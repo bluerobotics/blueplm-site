@@ -23,6 +23,7 @@ function toCardData(ext: ExtensionListItem): ExtensionCardData {
     native: ext.category === 'native',
     nativePlatform: ext.category === 'native' ? ext.tags.find(t => ['SolidWorks', 'Fusion', 'Inventor'].includes(t)) : undefined,
     downloads: ext.download_count,
+    iconUrl: ext.icon_url || undefined,
     updatedAt: ext.created_at,
   }
 }

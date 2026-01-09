@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   ArrowLeft, Download, Calendar, Tag, ExternalLink,
   Github, Globe, FileText, Shield, Flag, ChevronRight,
@@ -9,7 +9,8 @@ import VerificationBadge from '../../components/marketplace/VerificationBadge'
 import NativeBadge from '../../components/marketplace/NativeBadge'
 import InstallButton from '../../components/marketplace/InstallButton'
 import DeprecationWarning from '../../components/marketplace/DeprecationWarning'
-import { fetchExtension, fetchExtensionVersions, type ExtensionDetail, type ExtensionVersion } from '../../lib/api'
+import VersionSelector from '../../components/marketplace/VersionSelector'
+import { fetchExtension, fetchExtensionVersions, syncExtension, type ExtensionDetail, type ExtensionVersion } from '../../lib/api'
 
 function formatNumber(num: number): string {
   if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
@@ -33,6 +34,11 @@ export default function Extension() {
   const [versions, setVersions] = useState<ExtensionVersion[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Version selection state
+  const [selectedVersion, setSelectedVersion] = useState<string>('')
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [refreshMessage, setRefreshMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -47,11 +53,15 @@ export default function Extension() {
       try {
         const [extData, versionsData] = await Promise.all([
           fetchExtension(extensionId),
-          fetchExtensionVersions(extensionId),
+          fetchExtensionVersions(extensionId, true), // Include pre-release
         ])
         
         setExtension(extData)
         setVersions(versionsData)
+        // Default to latest version
+        if (versionsData.length > 0) {
+          setSelectedVersion(versionsData[0].version)
+        }
       } catch (err) {
         console.error('Failed to load extension:', err)
         setError(err instanceof Error ? err.message : 'Failed to load extension')
@@ -62,6 +72,49 @@ export default function Extension() {
 
     loadExtension()
   }, [id])
+
+  // Handle refresh/sync with GitHub
+  const handleRefresh = useCallback(async () => {
+    if (!extension) return
+    
+    setIsRefreshing(true)
+    setRefreshMessage(null)
+    
+    try {
+      const result = await syncExtension(extension.name)
+      
+      if (result.updated && result.newVersions.length > 0) {
+        // Reload extension data to get updated versions
+        const [extData, versionsData] = await Promise.all([
+          fetchExtension(extension.id),
+          fetchExtensionVersions(extension.id, true),
+        ])
+        setExtension(extData)
+        setVersions(versionsData)
+        setSelectedVersion(versionsData[0]?.version || selectedVersion)
+        
+        setRefreshMessage({
+          type: 'success',
+          text: `Found ${result.newVersions.length} new version${result.newVersions.length > 1 ? 's' : ''}: ${result.newVersions.join(', ')}`
+        })
+      } else {
+        setRefreshMessage({
+          type: 'success',
+          text: 'Already up to date!'
+        })
+      }
+    } catch (err) {
+      console.error('Failed to sync extension:', err)
+      setRefreshMessage({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Failed to check for updates'
+      })
+    } finally {
+      setIsRefreshing(false)
+      // Clear message after 5 seconds
+      setTimeout(() => setRefreshMessage(null), 5000)
+    }
+  }, [extension, selectedVersion])
 
   // Guard for missing ID
   if (!id) {
@@ -106,7 +159,8 @@ export default function Extension() {
     )
   }
 
-  const currentVersion = extension.latest_version?.version || '0.0.0'
+  const currentVersion = selectedVersion || extension.latest_version?.version || '0.0.0'
+  const currentVersionData = versions.find(v => v.version === currentVersion)
   const isNative = extension.category === 'native'
   const nativePlatform = isNative ? extension.tags.find(t => ['SolidWorks', 'Fusion', 'Inventor'].includes(t)) : undefined
 
@@ -170,8 +224,30 @@ export default function Extension() {
                   {isNative && (
                     <NativeBadge platform={nativePlatform} size="md" />
                   )}
-                  <span className="text-sm text-gray-400">v{currentVersion}</span>
                 </div>
+
+                {/* Version Selector */}
+                {versions.length > 0 && (
+                  <div className="mb-3">
+                    <VersionSelector
+                      versions={versions}
+                      selected={currentVersion}
+                      onSelect={setSelectedVersion}
+                      onRefresh={handleRefresh}
+                      isRefreshing={isRefreshing}
+                    />
+                    {/* Refresh message toast */}
+                    {refreshMessage && (
+                      <div className={`mt-2 px-3 py-2 rounded-lg text-sm ${
+                        refreshMessage.type === 'success' 
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
+                          : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                      }`}>
+                        {refreshMessage.text}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <p className="text-gray-400 mb-4">
                   {extension.description}
@@ -211,8 +287,8 @@ export default function Extension() {
             {/* Install Button - Mobile */}
             <div className="mt-6 lg:hidden">
               <InstallButton 
-                extensionId={extension.id} 
-                name={extension.display_name}
+                extensionName={extension.name}
+                displayName={extension.display_name}
                 version={currentVersion}
                 size="lg"
               />
@@ -225,8 +301,8 @@ export default function Extension() {
               {/* Install Button - Desktop */}
               <div className="hidden lg:block">
                 <InstallButton 
-                  extensionId={extension.id} 
-                  name={extension.display_name}
+                  extensionName={extension.name}
+                  displayName={extension.display_name}
                   version={currentVersion}
                   size="lg"
                 />
@@ -296,6 +372,24 @@ export default function Extension() {
                 {extension.long_description || extension.description || 'No description available.'}
               </div>
             </section>
+
+            {/* Changelog for selected version */}
+            {currentVersionData?.changelog && (
+              <section className="p-6 rounded-xl bg-white/5 border border-white/10">
+                <h2 className="font-display text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <History className="w-5 h-5 text-ocean-400" />
+                  Changelog — v{currentVersion}
+                  {currentVersionData.prerelease && (
+                    <span className="px-2 py-0.5 text-xs font-medium rounded bg-amber-500/20 text-amber-400">
+                      Pre-release
+                    </span>
+                  )}
+                </h2>
+                <div className="prose-custom text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+                  {currentVersionData.changelog}
+                </div>
+              </section>
+            )}
 
             {/* Permissions - shown if native extension */}
             {isNative && (
