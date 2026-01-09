@@ -1014,9 +1014,7 @@ BEGIN
         RAISE EXCEPTION 'Submission cannot be rejected from status: %', v_submission.status;
     END IF;
     
-    IF p_reviewer_notes IS NULL OR length(trim(p_reviewer_notes)) = 0 THEN
-        RAISE EXCEPTION 'Reviewer notes are required when rejecting a submission';
-    END IF;
+    -- Notes are optional for rejection
     
     UPDATE extension_submissions
     SET status = 'rejected',
@@ -1054,9 +1052,7 @@ BEGIN
         RAISE EXCEPTION 'Changes can only be requested on pending submissions, current status: %', v_submission.status;
     END IF;
     
-    IF p_reviewer_notes IS NULL OR length(trim(p_reviewer_notes)) = 0 THEN
-        RAISE EXCEPTION 'Reviewer notes are required when requesting changes';
-    END IF;
+    -- Notes are optional for requesting changes
     
     UPDATE extension_submissions
     SET status = 'needs_changes',
@@ -1302,6 +1298,7 @@ BEGIN
     
     IF v_publisher_id IS NULL THEN
         -- Create new publisher from submitter info
+        -- Generate a valid slug: lowercase, alphanumeric with hyphens, no leading/trailing hyphens
         INSERT INTO publishers (
             name,
             slug,
@@ -1309,7 +1306,11 @@ BEGIN
             description
         ) VALUES (
             COALESCE(v_submission.submitter_name, split_part(v_submission.submitter_email, '@', 1)),
-            lower(regexp_replace(COALESCE(v_submission.submitter_name, split_part(v_submission.submitter_email, '@', 1)), '[^a-z0-9]+', '-', 'g')),
+            -- Clean slug: lowercase, replace non-alphanumeric with hyphens, trim leading/trailing hyphens
+            trim(BOTH '-' FROM lower(regexp_replace(
+                COALESCE(v_submission.submitter_name, split_part(v_submission.submitter_email, '@', 1)),
+                '[^a-z0-9]+', '-', 'gi'
+            ))),
             v_submission.submitter_email,
             'Extension publisher'
         )

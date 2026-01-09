@@ -69,14 +69,14 @@ export type ApproveSubmissionBody = z.infer<typeof approveSubmissionSchema>;
 
 /** Reject a submission */
 export const rejectSubmissionSchema = z.object({
-  notes: z.string().min(10).max(2000, 'Rejection reason must be between 10 and 2000 characters'),
+  notes: z.string().min(1).max(2000).optional(),
 });
 
 export type RejectSubmissionBody = z.infer<typeof rejectSubmissionSchema>;
 
 /** Request changes on a submission */
 export const requestChangesSchema = z.object({
-  notes: z.string().min(10).max(2000, 'Requested changes must be between 10 and 2000 characters'),
+  notes: z.string().min(1).max(2000).optional(),
 });
 
 export type RequestChangesBody = z.infer<typeof requestChangesSchema>;

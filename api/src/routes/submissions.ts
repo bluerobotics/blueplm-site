@@ -164,8 +164,12 @@ storeSubmissions.post('/', async (c) => {
     throw badRequest('A submission for this repository is already pending review');
   }
 
-  // Use manifest.id as the extension name (unique identifier)
-  const extensionName = manifest.id;
+  // Extract extension name from manifest.id (format: "publisher.name")
+  // The database stores just the name part (e.g., "google-drive"), not the full ID
+  const extensionId = manifest.id;
+  const extensionName = extensionId.includes('.') 
+    ? extensionId.split('.').slice(1).join('.') // Get everything after first dot
+    : extensionId;
 
   // Check for duplicate name pending
   const { data: existingName } = await supabaseAdmin
@@ -257,7 +261,8 @@ storeSubmissions.post('/', async (c) => {
 
   if (error) {
     console.error('Create submission error:', error);
-    throw badRequest('Failed to create submission');
+    // Include more detail in error for debugging
+    throw badRequest(`Failed to create submission: ${error.message || error.code || 'Unknown error'}`);
   }
 
   return c.json(
@@ -432,10 +437,8 @@ adminSubmissions.post('/:id/approve', async (c) => {
     if (error.message.includes('not found')) {
       throw notFound('Submission');
     }
-    if (error.message.includes('cannot be approved')) {
-      throw badRequest(error.message);
-    }
-    throw badRequest('Failed to approve submission');
+    // Include full error message for debugging
+    throw badRequest(`Failed to approve submission: ${error.message || error.code || 'Unknown error'}`);
   }
 
   // Fetch the updated submission
