@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { 
   Lock, History, GitBranch, Users, FolderSync, Trash2, 
-  FileCheck, Workflow, Database, Bell, Shield, Search,
+  FileCheck, Workflow, Bell, Shield, Search,
   Download, ArrowRight, Star, ChevronRight, Play,
   Globe, Building2, Package, AlertCircle, FileWarning,
   HardDrive, MessageSquare, Webhook, Receipt,
@@ -45,83 +45,6 @@ const features = [
   // Integrations (shown as features)
   { icon: MessageSquare, title: 'Slack Notifications', description: 'Get notified in Slack for reviews and changes.', inProgress: true },
   { icon: Webhook, title: 'Webhooks', description: 'Custom integrations via webhook events.', inProgress: true },
-]
-
-// Integration logos - using Simple Icons CDN for proper brand icons
-const SolidWorksLogo = () => (
-  <img 
-    src="https://cdn.simpleicons.org/dassaultsystemes/E2231A" 
-    alt="SolidWorks" 
-    className="w-7 h-7"
-    loading="lazy"
-  />
-)
-
-const OdooLogo = () => (
-  <img 
-    src="https://cdn.simpleicons.org/odoo/714B67" 
-    alt="Odoo" 
-    className="w-7 h-7"
-    loading="lazy"
-  />
-)
-
-const WooCommerceLogo = () => (
-  <img 
-    src="https://cdn.simpleicons.org/woocommerce/96588A" 
-    alt="WooCommerce" 
-    className="w-7 h-7"
-    loading="lazy"
-  />
-)
-
-const GoogleDriveLogo = () => (
-  <img 
-    src="https://cdn.simpleicons.org/googledrive" 
-    alt="Google Drive" 
-    className="w-7 h-7"
-    loading="lazy"
-  />
-)
-
-const RestApiLogo = () => (
-  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
-    <Database className="w-4 h-4 text-white" />
-  </div>
-)
-
-
-const integrations = [
-  { 
-    Logo: SolidWorksLogo, 
-    title: 'SolidWorks', 
-    description: 'Native add-in with thumbnails and BOM extraction.',
-    color: 'text-red-400'
-  },
-  { 
-    Logo: OdooLogo, 
-    title: 'Odoo ERP', 
-    description: 'Sync suppliers, products, and BOMs automatically.',
-    color: 'text-purple-400'
-  },
-  { 
-    Logo: WooCommerceLogo, 
-    title: 'WooCommerce', 
-    description: 'Sync product catalog and inventory levels.',
-    color: 'text-purple-400'
-  },
-  { 
-    Logo: GoogleDriveLogo, 
-    title: 'Google Drive', 
-    description: 'Browse and edit Docs, Sheets, Slides inline.',
-    color: 'text-blue-400'
-  },
-  { 
-    Logo: RestApiLogo, 
-    title: 'REST API', 
-    description: 'Fastify server with Swagger docs and webhooks.',
-    color: 'text-emerald-400'
-  },
 ]
 
 export default function Home() {
@@ -269,39 +192,6 @@ export default function Home() {
             ))}
           </div>
 
-        </div>
-      </section>
-
-      {/* Integrations Section */}
-      <section className="relative py-20 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl font-bold text-white mb-3">
-              Integrations
-            </h2>
-            <p className="text-gray-400">
-              Connect with the tools you already use.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-5">
-            {integrations.map((integration) => (
-              <div
-                key={integration.title}
-                className="group p-5 rounded-xl glass-light hover:bg-white/5 transition-all duration-300 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)]"
-              >
-                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <integration.Logo />
-                </div>
-                <h3 className="font-display font-semibold text-white mb-1">
-                  {integration.title}
-                </h3>
-                <p className="text-gray-400 text-sm">
-                  {integration.description}
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
