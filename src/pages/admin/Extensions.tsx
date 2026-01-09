@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { 
   Search, Filter, ChevronLeft, ChevronRight,
   Loader2, AlertCircle, Package, MoreVertical,
-  Eye, EyeOff, CheckCircle2, Star, StarOff,
+  EyeOff, CheckCircle2, Star, StarOff,
   ExternalLink, Shield, Cpu, Trash2, RotateCcw
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -85,10 +85,14 @@ function ExtensionCard({
               </span>
             )}
             {extension.verified && (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" title="Verified" />
+              <span title="Verified">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              </span>
             )}
             {extension.featured && (
-              <Star className="w-4 h-4 text-amber-400 flex-shrink-0" title="Featured" />
+              <span title="Featured">
+                <Star className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              </span>
             )}
           </div>
           <p className="text-sm text-gray-500 font-mono mb-2">{extension.name}</p>
@@ -369,8 +373,7 @@ export default function Extensions() {
     }
   };
 
-  // Count stats
-  const publishedCount = extensions.filter(e => e.published).length;
+  // Count unpublished on current page
   const unpublishedCount = extensions.filter(e => !e.published).length;
 
   return (
