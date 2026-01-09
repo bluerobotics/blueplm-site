@@ -76,6 +76,7 @@ export default function AdminLayout() {
   const navItems: NavItem[] = [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/admin/submissions', icon: FileCheck, label: 'Submissions', badge: pendingCount },
+    { to: '/admin/extensions', icon: Package, label: 'Extensions' },
     { to: '/admin/settings', icon: Settings, label: 'Settings' },
   ];
 

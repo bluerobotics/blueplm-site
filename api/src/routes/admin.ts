@@ -262,6 +262,106 @@ admin.delete('/extensions/:id/deprecate', async (c) => {
 });
 
 /**
+ * GET /admin/extensions - List all extensions (including unpublished)
+ */
+admin.get('/extensions', async (c) => {
+  const status = c.req.query('status'); // 'all' | 'published' | 'unpublished'
+  const search = c.req.query('search');
+  const page = parseInt(c.req.query('page') || '1', 10);
+  const limit = parseInt(c.req.query('limit') || '20', 10);
+  const offset = (page - 1) * limit;
+
+  const supabaseAdmin = c.get('supabaseAdmin');
+
+  let query = supabaseAdmin
+    .from('extensions')
+    .select(`
+      *,
+      publishers!inner (
+        id,
+        name,
+        slug,
+        logo_url,
+        verified
+      )
+    `, { count: 'exact' });
+
+  // Filter by published status
+  if (status === 'published') {
+    query = query.eq('published', true);
+  } else if (status === 'unpublished') {
+    query = query.eq('published', false);
+  }
+  // 'all' or undefined shows all
+
+  // Search by name or display_name
+  if (search) {
+    query = query.or(`name.ilike.%${search}%,display_name.ilike.%${search}%`);
+  }
+
+  // Order and paginate
+  query = query
+    .order('updated_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  const { data: extensions, error, count } = await query;
+
+  if (error) {
+    console.error('List extensions error:', error);
+    throw badRequest('Failed to list extensions');
+  }
+
+  // Get version counts for each extension
+  const extensionIds = extensions?.map(e => e.id) || [];
+  let versionCounts: Record<string, number> = {};
+  
+  if (extensionIds.length > 0) {
+    const { data: versions } = await supabaseAdmin
+      .from('extension_versions')
+      .select('extension_id')
+      .in('extension_id', extensionIds);
+    
+    if (versions) {
+      versionCounts = versions.reduce((acc, v) => {
+        acc[v.extension_id] = (acc[v.extension_id] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+    }
+  }
+
+  const response: PaginatedResponse<unknown> = {
+    success: true,
+    data: (extensions || []).map(ext => ({
+      id: ext.id,
+      name: ext.name,
+      display_name: ext.display_name,
+      description: ext.description,
+      icon_url: ext.icon_url,
+      category: ext.category,
+      categories: ext.categories,
+      tags: ext.tags,
+      verified: ext.verified,
+      featured: ext.featured,
+      published: ext.published,
+      download_count: ext.download_count,
+      install_count: ext.install_count,
+      version_count: versionCounts[ext.id] || 0,
+      created_at: ext.created_at,
+      updated_at: ext.updated_at,
+      publisher: ext.publishers,
+    })),
+    pagination: {
+      page,
+      limit,
+      total: count || 0,
+      total_pages: Math.ceil((count || 0) / limit),
+    },
+  };
+
+  return c.json(response, 200, noCacheHeaders());
+});
+
+/**
  * GET /admin/reports - List all reports
  */
 admin.get('/reports', async (c) => {

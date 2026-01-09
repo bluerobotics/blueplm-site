@@ -494,3 +494,127 @@ export async function requestChangesSubmission(
   const result = await handleResponse<ApiResponse<ExtensionSubmission>>(response);
   return result.data!;
 }
+
+// ============================================================================
+// Admin Extension Management API
+// ============================================================================
+
+export interface AdminExtension {
+  id: string;
+  name: string;
+  display_name: string;
+  description: string | null;
+  icon_url: string | null;
+  category: 'sandboxed' | 'native';
+  categories: string[];
+  tags: string[];
+  verified: boolean;
+  featured: boolean;
+  published: boolean;
+  download_count: number;
+  install_count: number;
+  version_count: number;
+  created_at: string;
+  updated_at: string;
+  publisher: {
+    id: string;
+    name: string;
+    slug: string;
+    logo_url: string | null;
+    verified: boolean;
+  };
+}
+
+export type ExtensionPublishStatus = 'all' | 'published' | 'unpublished';
+
+export interface AdminExtensionListParams {
+  status?: ExtensionPublishStatus;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+/**
+ * List all extensions including unpublished (admin only)
+ */
+export async function fetchAdminExtensions(
+  accessToken: string,
+  params: AdminExtensionListParams = {}
+): Promise<PaginatedResponse<AdminExtension>> {
+  const searchParams = new URLSearchParams();
+  
+  if (params.status && params.status !== 'all') searchParams.set('status', params.status);
+  if (params.search) searchParams.set('search', params.search);
+  if (params.page) searchParams.set('page', String(params.page));
+  if (params.limit) searchParams.set('limit', String(params.limit));
+  
+  const response = await fetch(`${API_BASE}/admin/extensions?${searchParams}`, {
+    headers: getAdminHeaders(accessToken),
+  });
+  
+  return handleResponse<PaginatedResponse<AdminExtension>>(response);
+}
+
+/**
+ * Unpublish (soft delete) an extension (admin only)
+ */
+export async function unpublishExtension(
+  accessToken: string,
+  id: string
+): Promise<void> {
+  const response = await fetch(`${API_BASE}/admin/extensions/${id}`, {
+    method: 'DELETE',
+    headers: getAdminHeaders(accessToken),
+  });
+  
+  await handleResponse<ApiResponse<void>>(response);
+}
+
+/**
+ * Restore an unpublished extension (admin only)
+ */
+export async function restoreExtension(
+  accessToken: string,
+  id: string
+): Promise<void> {
+  const response = await fetch(`${API_BASE}/admin/extensions/${id}/restore`, {
+    method: 'POST',
+    headers: getAdminHeaders(accessToken),
+  });
+  
+  await handleResponse<ApiResponse<void>>(response);
+}
+
+/**
+ * Toggle extension verification status (admin only)
+ */
+export async function setExtensionVerified(
+  accessToken: string,
+  id: string,
+  verified: boolean
+): Promise<void> {
+  const response = await fetch(`${API_BASE}/admin/extensions/${id}/verify`, {
+    method: 'POST',
+    headers: getAdminHeaders(accessToken),
+    body: JSON.stringify({ verified }),
+  });
+  
+  await handleResponse<ApiResponse<void>>(response);
+}
+
+/**
+ * Toggle extension featured status (admin only)
+ */
+export async function setExtensionFeatured(
+  accessToken: string,
+  id: string,
+  featured: boolean
+): Promise<void> {
+  const response = await fetch(`${API_BASE}/admin/extensions/${id}/feature`, {
+    method: 'POST',
+    headers: getAdminHeaders(accessToken),
+    body: JSON.stringify({ featured }),
+  });
+  
+  await handleResponse<ApiResponse<void>>(response);
+}

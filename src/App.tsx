@@ -13,7 +13,7 @@ import Submit from './pages/marketplace/Submit'
 
 // Admin
 import AdminLayout from './layouts/AdminLayout'
-import { Login, Callback, Dashboard, Submissions, Submission, Settings } from './pages/admin'
+import { Login, Callback, Dashboard, Submissions, Submission, Extensions, Settings } from './pages/admin'
 
 // Check if we're on the extensions subdomain
 const isExtensionsSubdomain = window.location.hostname.startsWith('extensions.') || window.location.hostname.startsWith('marketplace.')
@@ -36,6 +36,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="submissions" element={<Submissions />} />
           <Route path="submissions/:id" element={<Submission />} />
+          <Route path="extensions" element={<Extensions />} />
           <Route path="settings" element={<Settings />} />
         </Route>
         {/* Redirect /marketplace to root on subdomain */}
@@ -68,6 +69,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="submissions" element={<Submissions />} />
         <Route path="submissions/:id" element={<Submission />} />
+        <Route path="extensions" element={<Extensions />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
